@@ -146,6 +146,21 @@ const properties = [
             en: 'from $3,200,000'
         },
         image: 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+    },
+    {
+        title: {
+            ru: 'Люкс пентхаус',
+            en: 'Luxury Penthouse'
+        },
+        description: {
+            ru: '3-спальный пентхаус с панорамной террасой',
+            en: '3-bedroom penthouse with panoramic terrace'
+        },
+        price: {
+            ru: 'от $1,800,000',
+            en: 'from $1,800,000'
+        },
+        image: 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1080&q=80'
     }
 ];
 
@@ -206,8 +221,6 @@ testimonials.forEach(testimonial => {
     `;
     testimonialsSlider.appendChild(testimonialCard);
 });
-
-
 
 const progressList = document.getElementById('progress-list');
 progressItems.forEach(item => {
