@@ -131,6 +131,21 @@ const properties = [
             en: 'from $450,000'
         },
         image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+    },
+    {
+        title: {
+            ru: 'Вилла на берегу моря',
+            en: 'Beachfront Villa'
+        },
+        description: {
+            ru: 'Роскошная 5-спальная вилла с прямым выходом к пляжу',
+            en: 'Luxurious 5-bedroom villa with direct beach access'
+        },
+        price: {
+            ru: 'от $3,200,000',
+            en: 'from $3,200,000'
+        },
+        image: 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
     }
 ];
 
