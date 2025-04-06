@@ -69,7 +69,7 @@ function initContactForm() {
             const data = Object.fromEntries(formData.entries());
             
             // Redirect to WhatsApp
-            const message = `Новая заявка:\nИмя: ${data.name}\nWhatsApp: ${data.whatsapp}\nТип запроса: ${data.requestType}\nТип недвижимости: ${data.propertyType}`;
+            const message = `Новая заявка:\nИмя: ${data.name}`;
             window.open(`https://wa.me/message/2OHKSR7E27KVH1?text=${encodeURIComponent(message)}`, '_blank');
             
             contactForm.reset();
