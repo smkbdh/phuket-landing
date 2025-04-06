@@ -171,7 +171,7 @@ properties.forEach(property => {
             <h3 class="property-title" data-ru="${property.title.ru}" data-en="${property.title.en}">${property.title.ru}</h3>
             <p class="property-description" data-ru="${property.description.ru}" data-en="${property.description.en}">${property.description.ru}</p>
             <p class="property-price" data-ru="${property.price.ru}" data-en="${property.price.en}">${property.price.ru}</p>
-            <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" class="cta-button" data-ru="Узнать больше" data-en="Learn more">Узнать больше</a>
+            <a href="https://wa.me/message/2OHKSR7E27KVH1?text=" class="cta-button" data-ru="Узнать больше" data-en="Learn more">Узнать больше</a>
         </div>
     `;
     propertiesGrid.appendChild(propertyCard);
@@ -192,41 +192,7 @@ testimonials.forEach(testimonial => {
     testimonialsSlider.appendChild(testimonialCard);
 });
 
-// Progress tracker
-const progressItems = [
-    {
-        id: 'analysis',
-        text: {
-            ru: 'Анализ конкурентов завершен',
-            en: 'Competitor analysis completed'
-        },
-        status: 'completed'
-    },
-    {
-        id: 'design',
-        text: {
-            ru: 'Дизайн разработан',
-            en: 'Design developed'
-        },
-        status: 'completed'
-    },
-    {
-        id: 'development',
-        text: {
-            ru: 'Верстка в процессе',
-            en: 'Development in progress'
-        },
-        status: 'in-progress'
-    },
-    {
-        id: 'testing',
-        text: {
-            ru: 'Тестирование не начато',
-            en: 'Testing not started'
-        },
-        status: 'not-started'
-    }
-];
+
 
 const progressList = document.getElementById('progress-list');
 progressItems.forEach(item => {
