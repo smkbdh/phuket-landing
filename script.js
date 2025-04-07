@@ -301,8 +301,8 @@ const properties = [
             en: 'Modern villa with 4 bedrooms, private pool and sea view'
         },
         price: {
-            ru: 'от 2,500,000 $',
-            en: 'from $2,500,000'
+            ru: 'от 87,500,000 ฿',
+            en: 'from ฿87,500,000'
         },
         image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
     },
@@ -316,8 +316,8 @@ const properties = [
             en: 'Stylish apartment with 2 bedrooms, fully equipped kitchen'
         },
         price: {
-            ru: 'от 450,000 $',
-            en: 'from $450,000'
+            ru: 'от 15,750,000 ฿',
+            en: 'from ฿15,750,000'
         },
         image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
     },
@@ -331,8 +331,8 @@ const properties = [
             en: 'Luxurious 5-bedroom villa with direct beach access'
         },
         price: {
-            ru: 'от $3,200,000',
-            en: 'from $3,200,000'
+            ru: 'от 112,000,000 ฿',
+            en: 'from ฿112,000,000'
         },
         image: 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
     },
@@ -346,8 +346,8 @@ const properties = [
             en: '3-bedroom penthouse with panoramic terrace'
         },
         price: {
-            ru: 'от $1,800,000',
-            en: 'from $1,800,000'
+            ru: 'от 63,000,000 ฿',
+            en: 'from ฿63,000,000'
         },
         image: 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1080&q=80'
     }
