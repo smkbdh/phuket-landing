@@ -172,6 +172,59 @@ function initPriceGrowthChart() {
     });
 }
 
+// Countdown Timer
+function initCountdownTimer() {
+    // Устанавливаем дату окончания акции (30 дней от текущей даты)
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 30);
+
+    function updateTimer() {
+        const now = new Date();
+        const diff = endDate - now;
+
+        if (diff <= 0) {
+            // Если время вышло, обновляем таймер на следующие 30 дней
+            endDate.setDate(endDate.getDate() + 30);
+            return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.querySelector('.days').textContent = days.toString().padStart(2, '0');
+        document.querySelector('.hours').textContent = hours.toString().padStart(2, '0');
+        document.querySelector('.minutes').textContent = minutes.toString().padStart(2, '0');
+        document.querySelector('.seconds').textContent = seconds.toString().padStart(2, '0');
+    }
+
+    // Обновляем таймер каждую секунду
+    updateTimer();
+    setInterval(updateTimer, 1000);
+}
+
+// FAQ Functionality
+function initFAQ() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        
+        question.addEventListener('click', () => {
+            // Закрываем все остальные ответы
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Переключаем текущий ответ
+            item.classList.toggle('active');
+        });
+    });
+}
+
 // Initialize all functionality when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initAccordion();
@@ -180,6 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initSmoothScrolling();
     initROICalculator();
     initPriceGrowthChart();
+    initCountdownTimer();
+    initFAQ();
 });
 
 // Property data

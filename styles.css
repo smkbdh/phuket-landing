@@ -875,3 +875,157 @@ body {
         padding: 30px 20px;
     }
 }
+
+/* Special Offer Section */
+.special-offer {
+    padding: 100px 20px;
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+                url('https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=2340&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--white);
+}
+
+.offer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.offer-content {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 50px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.offer-text h3 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: var(--secondary-color);
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.countdown-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 100px;
+}
+
+.countdown-item span {
+    display: block;
+}
+
+.countdown-item .days,
+.countdown-item .hours,
+.countdown-item .minutes,
+.countdown-item .seconds {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.countdown-item .label {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* FAQ Section */
+.faq {
+    padding: 100px 20px;
+    background: var(--light-bg);
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: var(--white);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.faq-question {
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.faq-question:hover {
+    background-color: rgba(231, 76, 60, 0.05);
+}
+
+.faq-question h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--primary-color);
+}
+
+.faq-toggle {
+    font-size: 24px;
+    color: var(--secondary-color);
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-toggle {
+    transform: rotate(45deg);
+}
+
+.faq-answer {
+    padding: 0 25px;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-out;
+}
+
+.faq-item.active .faq-answer {
+    padding: 0 25px 25px;
+    max-height: 1000px;
+}
+
+.faq-answer p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+    .countdown-timer {
+        gap: 15px;
+    }
+
+    .countdown-item {
+        min-width: 70px;
+        padding: 15px;
+    }
+
+    .countdown-item .days,
+    .countdown-item .hours,
+    .countdown-item .minutes,
+    .countdown-item .seconds {
+        font-size: 24px;
+    }
+
+    .countdown-item .label {
+        font-size: 12px;
+    }
+
+    .offer-text h3 {
+        font-size: 28px;
+    }
+}
