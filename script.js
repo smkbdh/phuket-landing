@@ -231,8 +231,10 @@ function initMobileMenu() {
     const navLinks = document.querySelector('.nav-links');
     const navLinksItems = document.querySelectorAll('.nav-link');
 
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', () => {
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             mobileMenuBtn.classList.toggle('active');
             navLinks.classList.toggle('active');
         });
@@ -243,6 +245,14 @@ function initMobileMenu() {
                 mobileMenuBtn.classList.remove('active');
                 navLinks.classList.remove('active');
             });
+        });
+
+        // Закрываем меню при клике вне его
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                mobileMenuBtn.classList.remove('active');
+                navLinks.classList.remove('active');
+            }
         });
     }
 }
