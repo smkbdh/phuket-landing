@@ -633,43 +633,54 @@ body {
     box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
 }
 
-/* WhatsApp floating button */
-.whatsapp-float {
+/* Floating Social Buttons */
+.whatsapp-float,
+.instagram-float {
     position: fixed;
     bottom: 20px;
-    left: 20px;
-    z-index: 1000;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
-    height: 60px;
-    background-color: #25D366;
-    border-radius: 50%;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
-    animation: pulse 2s infinite;
+    z-index: 1000;
 }
 
-.whatsapp-float:hover {
-    transform: scale(1.1);
+.whatsapp-float {
+    left: 20px;
+    background-color: #25D366;
+}
+
+.instagram-float {
+    left: 90px;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.whatsapp-float:hover,
+.instagram-float:hover {
+    transform: translateY(-5px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-.whatsapp-icon {
-    width: 35px;
-    height: 35px;
+.whatsapp-float i,
+.instagram-float i {
+    font-size: 32px;
+    color: var(--white);
 }
 
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+@media (max-width: 768px) {
+    .whatsapp-float,
+    .instagram-float {
+        width: 50px;
+        height: 50px;
     }
-    70% {
-        box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+
+    .whatsapp-float i,
+    .instagram-float i {
+        font-size: 24px;
     }
 }
 
@@ -973,6 +984,11 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-item.active {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .faq-question {
@@ -992,6 +1008,11 @@ body {
     margin: 0;
     font-size: 18px;
     color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.faq-item.active .faq-question h3 {
+    color: var(--secondary-color);
 }
 
 .faq-toggle {
@@ -1009,11 +1030,13 @@ body {
     max-height: 0;
     overflow: hidden;
     transition: all 0.3s ease-out;
+    opacity: 0;
 }
 
 .faq-item.active .faq-answer {
     padding: 0 25px 25px;
     max-height: 1000px;
+    opacity: 1;
 }
 
 .faq-answer p {
@@ -1092,6 +1115,8 @@ html {
 @media (max-width: 768px) {
     .mobile-menu-btn {
         display: block;
+        position: relative;
+        z-index: 1000;
     }
 
     .nav-links {
@@ -1105,7 +1130,8 @@ html {
         justify-content: center;
         align-items: center;
         transition: right 0.3s ease;
-        z-index: 100;
+        z-index: 999;
+        padding: 80px 20px 20px;
     }
 
     .nav-links.active {
@@ -1123,16 +1149,4 @@ html {
     .mobile-menu-btn.active .bar:nth-child(3) {
         transform: translateY(-8px) rotate(-45deg);
     }
-}
-
-/* Floating Social Buttons */
-.instagram-float {
-    bottom: 20px;
-    left: 90px;
-    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-}
-
-.instagram-float i {
-    font-size: 32px;
-    color: var(--white);
 }
