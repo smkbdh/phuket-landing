@@ -118,6 +118,60 @@ function initROICalculator() {
     }
 }
 
+// Price Growth Chart
+function initPriceGrowthChart() {
+    const ctx = document.getElementById('priceGrowthChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['2020', '2021', '2022', '2023', '2024'],
+            datasets: [
+                {
+                    label: 'Пхукет',
+                    data: [100, 110, 125, 145, 160],
+                    borderColor: '#e74c3c',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Бали',
+                    data: [100, 105, 112, 120, 129],
+                    borderColor: '#3498db',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Дубай',
+                    data: [100, 108, 118, 130, 142],
+                    borderColor: '#2ecc71',
+                    tension: 0.4,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Динамика роста цен на недвижимость (2020 = 100%)'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    min: 90,
+                    max: 170
+                }
+            }
+        }
+    });
+}
+
 // Initialize all functionality when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initAccordion();
@@ -125,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initContactForm();
     initSmoothScrolling();
     initROICalculator();
+    initPriceGrowthChart();
 });
 
 // Property data

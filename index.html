@@ -57,6 +57,76 @@
         </div>
     </section>
 
+    <section id="comparison" class="comparison">
+        <h2 class="section-title">
+            <span data-ru="Пхукет vs другие курорты: где выше ROI?" data-en="Phuket vs other resorts: where is ROI higher?">Пхукет vs другие курорты: где выше ROI?</span>
+        </h2>
+        <div class="comparison-container">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th data-ru="Параметр" data-en="Parameter">Параметр</th>
+                        <th>Пхукет</th>
+                        <th>Бали</th>
+                        <th>Дубай</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-ru="Средняя доходность" data-en="Average ROI">Средняя доходность</td>
+                        <td class="highlight">10%</td>
+                        <td>7%</td>
+                        <td>8%</td>
+                    </tr>
+                    <tr>
+                        <td data-ru="Рост цен (2024)" data-en="Price growth (2024)">Рост цен (2024)</td>
+                        <td class="highlight">+15%</td>
+                        <td>+9%</td>
+                        <td>+12%</td>
+                    </tr>
+                    <tr>
+                        <td data-ru="Стоимость содержания" data-en="Maintenance cost">Стоимость содержания</td>
+                        <td class="highlight">1%</td>
+                        <td>2%</td>
+                        <td>3%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="price-growth-chart">
+                <canvas id="priceGrowthChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section id="guarantees" class="guarantees">
+        <h2 class="section-title" data-ru="Гарантии безопасности" data-en="Safety guarantees">Гарантии безопасности</h2>
+        <div class="guarantees-grid">
+            <div class="guarantee-card">
+                <div class="guarantee-icon">🔒</div>
+                <h3 data-ru="Юридическая защита" data-en="Legal protection">Юридическая защита</h3>
+                <p data-ru="Договор на английском/тайском с нотариальным заверением" data-en="Contract in English/Thai with notarization">Договор на английском/тайском с нотариальным заверением</p>
+            </div>
+            <div class="guarantee-card">
+                <div class="guarantee-icon">📑</div>
+                <h3 data-ru="Страховка объекта" data-en="Property insurance">Страховка объекта</h3>
+                <p data-ru="Страховка объекта включена в управление" data-en="Property insurance included in management">Страховка объекта включена в управление</p>
+            </div>
+            <div class="guarantee-card">
+                <div class="guarantee-icon">💼</div>
+                <h3 data-ru="Гарантия возврата" data-en="Money-back guarantee">Гарантия возврата</h3>
+                <p data-ru="Возврат 100% депозита, если не подошли условия" data-en="100% deposit refund if conditions don't match">Возврат 100% депозита, если не подошли условия</p>
+            </div>
+        </div>
+        <div class="partners">
+            <h3 data-ru="Наши партнеры" data-en="Our partners">Наши партнеры</h3>
+            <div class="partners-grid">
+                <img src="https://via.placeholder.com/150x50?text=Bank" alt="Bank Partner">
+                <img src="https://via.placeholder.com/150x50?text=Legal" alt="Legal Partner">
+                <img src="https://via.placeholder.com/150x50?text=Insurance" alt="Insurance Partner">
+            </div>
+        </div>
+    </section>
+
     <section id="benefits" class="benefits">
         <h2 class="section-title" data-ru="Почему выбирают нас" data-en="Why choose us">Почему выбирают нас</h2>
         <div class="benefits-grid">
@@ -210,6 +280,7 @@
         </svg>
     </a>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html> 

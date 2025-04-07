@@ -733,3 +733,145 @@ body {
     color: var(--secondary-color);
     font-size: 24px;
 }
+
+/* Comparison Section */
+.comparison {
+    padding: 100px 20px;
+    background: var(--white);
+}
+
+.comparison-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.comparison-table th {
+    background: var(--primary-color);
+    color: var(--white);
+    font-weight: 600;
+}
+
+.comparison-table td.highlight {
+    color: var(--secondary-color);
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.price-growth-chart {
+    width: 100%;
+    height: 300px;
+    background: var(--white);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Guarantees Section */
+.guarantees {
+    padding: 100px 20px;
+    background: var(--light-bg);
+}
+
+.guarantees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto 50px;
+}
+
+.guarantee-card {
+    background: var(--white);
+    padding: 40px 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.guarantee-card:hover {
+    transform: translateY(-10px);
+}
+
+.guarantee-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.guarantee-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.guarantee-card p {
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.partners {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.partners h3 {
+    margin-bottom: 30px;
+    color: var(--primary-color);
+    font-size: 24px;
+}
+
+.partners-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 30px;
+    align-items: center;
+    justify-items: center;
+}
+
+.partners-grid img {
+    max-width: 150px;
+    height: auto;
+    filter: grayscale(1);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.partners-grid img:hover {
+    filter: grayscale(0);
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .comparison-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .comparison-table {
+        font-size: 14px;
+    }
+    
+    .guarantee-card {
+        padding: 30px 20px;
+    }
+}
