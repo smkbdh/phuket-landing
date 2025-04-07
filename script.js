@@ -230,13 +230,16 @@ function initMobileMenu() {
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const navLinks = document.querySelector('.nav-links');
     const navLinksItems = document.querySelectorAll('.nav-link');
+    const body = document.body;
 
     if (mobileMenuBtn && navLinks) {
+        // Обработчик для кнопки меню
         mobileMenuBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             mobileMenuBtn.classList.toggle('active');
             navLinks.classList.toggle('active');
+            body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
         });
 
         // Закрываем меню при клике на ссылку
@@ -244,15 +247,24 @@ function initMobileMenu() {
             link.addEventListener('click', () => {
                 mobileMenuBtn.classList.remove('active');
                 navLinks.classList.remove('active');
+                body.style.overflow = '';
             });
         });
 
         // Закрываем меню при клике вне его
         document.addEventListener('click', (e) => {
-            if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+            if (navLinks.classList.contains('active') && 
+                !navLinks.contains(e.target) && 
+                !mobileMenuBtn.contains(e.target)) {
                 mobileMenuBtn.classList.remove('active');
                 navLinks.classList.remove('active');
+                body.style.overflow = '';
             }
+        });
+
+        // Предотвращаем закрытие при клике внутри меню
+        navLinks.addEventListener('click', (e) => {
+            e.stopPropagation();
         });
     }
 }
