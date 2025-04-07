@@ -108,7 +108,7 @@ function initROICalculator() {
                 const yearlyROI = investment * 0.105;
                 const monthlyIncome = yearlyROI / 12;
 
-                resultMonthly.textContent = `$${Math.round(monthlyIncome).toLocaleString()}`;
+                resultMonthly.textContent = `฿${Math.round(monthlyIncome).toLocaleString()}`;
                 resultYearly.textContent = '10.5%';
 
                 // Показываем результаты
@@ -409,27 +409,4 @@ testimonials.forEach(testimonial => {
         <p class="testimonial-name" data-ru="${testimonial.name.ru}" data-en="${testimonial.name.en}">${testimonial.name.ru}</p>
     `;
     testimonialsSlider.appendChild(testimonialCard);
-});
-
-const progressList = document.getElementById('progress-list');
-progressItems.forEach(item => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-        <span class="status-icon ${item.status}">${getStatusIcon(item.status)}</span>
-        <span class="progress-text" data-ru="${item.text.ru}" data-en="${item.text.en}">${item.text.ru}</span>
-    `;
-    progressList.appendChild(li);
-});
-
-function getStatusIcon(status) {
-    switch(status) {
-        case 'completed':
-            return '✅';
-        case 'in-progress':
-            return '⏳';
-        case 'not-started':
-            return '❌';
-        default:
-            return '❌';
-    }
-} 
+}); 
