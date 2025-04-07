@@ -92,12 +92,39 @@ function initSmoothScrolling() {
     });
 }
 
+// ROI Calculator functionality
+function initROICalculator() {
+    const calculator = document.getElementById('roi-calculator');
+    if (calculator) {
+        const input = calculator.querySelector('input[name="investment"]');
+        const resultMonthly = calculator.querySelector('.monthly-income');
+        const resultYearly = calculator.querySelector('.yearly-roi');
+        const calculateBtn = calculator.querySelector('.calculate-btn');
+
+        calculateBtn.addEventListener('click', () => {
+            const investment = parseFloat(input.value);
+            if (!isNaN(investment)) {
+                // Примерный расчет: 10.5% годовых
+                const yearlyROI = investment * 0.105;
+                const monthlyIncome = yearlyROI / 12;
+
+                resultMonthly.textContent = `$${Math.round(monthlyIncome).toLocaleString()}`;
+                resultYearly.textContent = '10.5%';
+
+                // Показываем результаты
+                calculator.querySelector('.calculator-results').style.display = 'block';
+            }
+        });
+    }
+}
+
 // Initialize all functionality when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initAccordion();
     initLanguageSwitcher();
     initContactForm();
     initSmoothScrolling();
+    initROICalculator();
 });
 
 // Property data
