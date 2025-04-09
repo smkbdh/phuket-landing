@@ -62,23 +62,69 @@
     </section>
 
     <section id="roi-calculator" class="roi-calculator">
+        <div class="calculator-bg-overlay"></div>
         <h2 class="section-title" data-ru="Рассчитайте свою доходность" data-en="Calculate your ROI">Рассчитайте свою доходность</h2>
         <div class="calculator-container">
             <div class="calculator-input">
-                <label data-ru="Ваш бюджет (THB)" data-en="Your budget (THB)">Ваш бюджет (THB)</label>
-                <input type="number" name="investment" placeholder="Например: 500000" min="100000" step="50000">
+                <div class="currency-switcher">
+                    <button class="currency-btn active" data-currency="THB">THB</button>
+                    <button class="currency-btn" data-currency="USD">USD</button>
+                    <button class="currency-btn" data-currency="EUR">EUR</button>
+                </div>
+                
+                <div class="input-group">
+                    <label data-ru="Сумма инвестиций" data-en="Investment amount">Сумма инвестиций</label>
+                    <input type="number" name="investment" placeholder="5,000,000" min="100000" step="50000">
+                    <span class="currency-label">THB</span>
+                </div>
+
+                <div class="input-group">
+                    <label data-ru="Желаемая доходность в месяц (%)" data-en="Desired monthly yield (%)">Желаемая доходность в месяц (%)</label>
+                    <input type="range" name="yield" min="0.5" max="2" step="0.1" value="1">
+                    <div class="range-value"><span>1</span>%</div>
+                </div>
+
                 <button class="calculate-btn" data-ru="Рассчитать" data-en="Calculate">Рассчитать</button>
             </div>
+
             <div class="calculator-results" style="display: none;">
-                <div class="result-item">
-                    <span class="result-label" data-ru="Ежемесячный доход:" data-en="Monthly income:">Ежемесячный доход:</span>
-                    <span class="monthly-income result-value">$0</span>
+                <div class="results-header">
+                    <h3 data-ru="Ваш потенциальный доход" data-en="Your potential income">Ваш потенциальный доход</h3>
+                    <button class="share-btn" title="Поделиться результатом">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
                 </div>
-                <div class="result-item">
-                    <span class="result-label" data-ru="Годовая доходность:" data-en="Annual ROI:">Годовая доходность:</span>
-                    <span class="yearly-roi result-value">0%</span>
+
+                <div class="results-grid">
+                    <div class="result-item">
+                        <span class="result-label" data-ru="Ежемесячный доход:" data-en="Monthly income:">Ежемесячный доход:</span>
+                        <span class="monthly-income result-value">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-ru="Годовая доходность:" data-en="Annual ROI:">Годовая доходность:</span>
+                        <span class="yearly-roi result-value">0%</span>
+                    </div>
                 </div>
-                <a href="#contact" class="cta-button" data-ru="✅ Получить персональный отчет" data-en="✅ Get personal report">✅ Получить персональный отчет</a>
+
+                <div class="chart-container">
+                    <canvas id="roiChart"></canvas>
+                </div>
+
+                <div class="comparison-section">
+                    <h4 data-ru="Сравнение с другими инвестициями" data-en="Comparison with other investments">Сравнение с другими инвестициями</h4>
+                    <div class="comparison-chart">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="recommendations">
+                    <h4 data-ru="Рекомендации" data-en="Recommendations">Рекомендации</h4>
+                    <ul class="recommendations-list">
+                        <!-- Рекомендации будут добавляться динамически -->
+                    </ul>
+                </div>
+
+                <a href="#contact" class="cta-button" data-ru="✅ Получить персональный инвестиционный план" data-en="✅ Get personal investment plan">✅ Получить персональный инвестиционный план</a>
             </div>
         </div>
     </section>
