@@ -7,7 +7,7 @@
     <meta name="description" content="Эксклюзивная недвижимость на Пхукете. Продажа и аренда вилл, квартир и земельных участков. Инвестиции в недвижимость Таиланда.">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://via.placeholder.com/32x32.png">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -194,9 +194,9 @@
         <div class="partners">
             <h3 data-ru="Наши партнеры" data-en="Our partners">Наши партнеры</h3>
             <div class="partners-grid">
-                <img src="https://via.placeholder.com/150x50?text=Bank" alt="Bank Partner">
-                <img src="https://via.placeholder.com/150x50?text=Legal" alt="Legal Partner">
-                <img src="https://via.placeholder.com/150x50?text=Insurance" alt="Insurance Partner">
+                <div class="partner-logo">Банк</div>
+                <div class="partner-logo">Юридическая фирма</div>
+                <div class="partner-logo">Страховая компания</div>
             </div>
         </div>
     </section>
@@ -433,7 +433,17 @@
     </a>
 
     <!-- Скрипты -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <script src="script.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Проверяем загрузку Chart.js
+        window.addEventListener('load', () => {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded');
+            } else {
+                console.log('Chart.js loaded successfully');
+            }
+        });
+    </script>
+    <script src="script.js"></script>
 </body>
 </html> 

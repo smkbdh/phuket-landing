@@ -272,10 +272,16 @@ function initROICalculator() {
                 }
 
                 const context = ctx.getContext('2d');
+                if (!context) {
+                    console.error('Could not get 2D context for ROI chart');
+                    return;
+                }
+
                 const months = Array.from({length: 12}, (_, i) => i + 1);
                 const values = months.map(month => investment + (monthlyIncome * month));
 
-                if (window.roiChart) {
+                // Уничтожаем старый график, если он существует
+                if (window.roiChart && typeof window.roiChart.destroy === 'function') {
                     window.roiChart.destroy();
                 }
 
@@ -328,150 +334,166 @@ function initROICalculator() {
 
         // График сравнения
         function updateComparisonChart(yearlyROI) {
-            const ctx = document.getElementById('comparisonChart').getContext('2d');
-            const data = {
-                labels: ['Недвижимость Пхукета', 'Банковский депозит', 'Облигации', 'Фондовый рынок'],
-                datasets: [{
-                    data: [yearlyROI, 3, 5, 8],
-                    backgroundColor: ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f']
-                }]
-            };
+            try {
+                const ctx = document.getElementById('comparisonChart');
+                if (!ctx) {
+                    console.error('Comparison Chart canvas not found');
+                    return;
+                }
 
-            if (window.comparisonChart) {
-                window.comparisonChart.destroy();
-            }
+                const context = ctx.getContext('2d');
+                if (!context) {
+                    console.error('Could not get 2D context for comparison chart');
+                    return;
+                }
 
-            window.comparisonChart = new Chart(ctx, {
-                type: 'bar',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)',
-                                borderDash: [5, 5]
-                            },
-                            ticks: {
-                                color: 'rgba(255, 255, 255, 0.7)',
-                                callback: value => value + '%',
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                },
-                                padding: 10
-                            },
-                            title: {
-                                display: true,
-                                text: 'Годовая доходность',
-                                color: 'rgba(255, 255, 255, 0.9)',
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                }
+                const data = {
+                    labels: ['Недвижимость Пхукета', 'Банковский депозит', 'Облигации', 'Фондовый рынок'],
+                    datasets: [{
+                        data: [yearlyROI, 3, 5, 8],
+                        backgroundColor: ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f']
+                    }]
+                };
+
+                // Уничтожаем старый график, если он существует
+                if (window.comparisonChart && typeof window.comparisonChart.destroy === 'function') {
+                    window.comparisonChart.destroy();
+                }
+
+                window.comparisonChart = new Chart(context, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
                             }
                         },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                color: 'rgba(255, 255, 255, 0.7)',
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)',
+                                    borderDash: [5, 5]
                                 },
-                                padding: 10,
-                                maxRotation: 45,
-                                minRotation: 45
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    callback: value => value + '%',
+                                    font: {
+                                        size: 12,
+                                        weight: 'bold'
+                                    },
+                                    padding: 10
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    font: {
+                                        size: 12,
+                                        weight: 'bold'
+                                    },
+                                    padding: 10,
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('Error updating comparison chart:', error);
+            }
         }
 
         // Генерация рекомендаций
         function generateRecommendations(yearlyROI) {
-            const recommendationsList = calculator.querySelector('.recommendations-list');
-            recommendationsList.innerHTML = '';
-
-            // Базовые рекомендации
-            const baseRecommendations = [
-                {
-                    title: 'Виллы премиум-класса',
-                    description: 'Гарантированная доходность от 10% годовых',
-                    roi: '10-12%',
-                    location: 'Районы: Лагуна, Банг Тао, Сурин',
-                    price: 'от 25,000,000 ฿'
-                },
-                {
-                    title: 'Апартаменты с видом на море',
-                    description: 'Высокий спрос в высокий сезон',
-                    roi: '8-10%',
-                    location: 'Районы: Ката, Карон, Раваи',
-                    price: 'от 8,000,000 ฿'
-                },
-                {
-                    title: 'Таунхаусы',
-                    description: 'Стабильный доход от долгосрочной аренды',
-                    roi: '6-8%',
-                    location: 'Районы: Чалонг, Кату, Таланг',
-                    price: 'от 5,000,000 ฿'
+            try {
+                const recommendationsList = document.querySelector('.recommendations-list');
+                if (!recommendationsList) {
+                    console.error('Recommendations list container not found');
+                    return;
                 }
-            ];
 
-            // Дополнительные рекомендации в зависимости от ROI
-            const additionalRecommendations = [];
-            
-            if (yearlyROI > 12) {
-                additionalRecommendations.push({
-                    title: 'Люкс виллы первой линии',
-                    description: 'Эксклюзивные объекты с максимальной доходностью',
-                    roi: '12-15%',
-                    location: 'Районы: Камала, Сурин (первая линия)',
-                    price: 'от 45,000,000 ฿'
+                recommendationsList.innerHTML = '';
+
+                // Базовые рекомендации
+                const baseRecommendations = [
+                    {
+                        title: 'Виллы премиум-класса',
+                        description: 'Гарантированная доходность от 10% годовых',
+                        roi: '10-12%',
+                        location: 'Районы: Лагуна, Банг Тао, Сурин',
+                        price: 'от 25,000,000 ฿'
+                    },
+                    {
+                        title: 'Апартаменты с видом на море',
+                        description: 'Высокий спрос в высокий сезон',
+                        roi: '8-10%',
+                        location: 'Районы: Ката, Карон, Раваи',
+                        price: 'от 8,000,000 ฿'
+                    },
+                    {
+                        title: 'Таунхаусы',
+                        description: 'Стабильный доход от долгосрочной аренды',
+                        roi: '6-8%',
+                        location: 'Районы: Чалонг, Кату, Таланг',
+                        price: 'от 5,000,000 ฿'
+                    }
+                ];
+
+                // Дополнительные рекомендации в зависимости от ROI
+                const additionalRecommendations = [];
+                
+                if (yearlyROI > 12) {
+                    additionalRecommendations.push({
+                        title: 'Люкс виллы первой линии',
+                        description: 'Эксклюзивные объекты с максимальной доходностью',
+                        roi: '12-15%',
+                        location: 'Районы: Камала, Сурин (первая линия)',
+                        price: 'от 45,000,000 ฿'
+                    });
+                } else if (yearlyROI < 6) {
+                    additionalRecommendations.push({
+                        title: 'Кондоминиумы',
+                        description: 'Доступные инвестиции с низким порогом входа',
+                        roi: '5-7%',
+                        location: 'Районы: Пхукет Таун, Кату',
+                        price: 'от 3,000,000 ฿'
+                    });
+                }
+
+                // Объединяем все рекомендации
+                const allRecommendations = [...baseRecommendations, ...additionalRecommendations];
+
+                // Создаем и добавляем элементы рекомендаций
+                allRecommendations.forEach((rec, index) => {
+                    const item = document.createElement('li');
+                    item.className = 'recommendation-item';
+                    item.style.animationDelay = `${index * 0.2}s`;
+
+                    item.innerHTML = `
+                        <div class="recommendation-header">
+                            <h4>${rec.title}</h4>
+                            <span class="roi-badge">${rec.roi}</span>
+                        </div>
+                        <p class="recommendation-description">${rec.description}</p>
+                        <div class="recommendation-details">
+                            <p class="location"><i class="fas fa-map-marker-alt"></i> ${rec.location}</p>
+                            <p class="price"><i class="fas fa-tag"></i> ${rec.price}</p>
+                        </div>
+                    `;
+
+                    recommendationsList.appendChild(item);
                 });
-            } else if (yearlyROI < 6) {
-                additionalRecommendations.push({
-                    title: 'Кондоминиумы',
-                    description: 'Доступные инвестиции с низким порогом входа',
-                    roi: '5-7%',
-                    location: 'Районы: Пхукет Таун, Кату',
-                    price: 'от 3,000,000 ฿'
-                });
+            } catch (error) {
+                console.error('Error generating recommendations:', error);
             }
-
-            // Объединяем все рекомендации
-            const allRecommendations = [...baseRecommendations, ...additionalRecommendations];
-
-            // Создаем HTML для каждой рекомендации
-            allRecommendations.forEach(rec => {
-                const li = document.createElement('li');
-                li.className = 'recommendation-item';
-                li.innerHTML = `
-                    <div class="recommendation-header">
-                        <h4>${rec.title}</h4>
-                        <span class="roi-badge">${rec.roi}</span>
-                    </div>
-                    <p class="recommendation-description">${rec.description}</p>
-                    <div class="recommendation-details">
-                        <span class="location"><i class="fas fa-map-marker-alt"></i> ${rec.location}</span>
-                        <span class="price"><i class="fas fa-tag"></i> ${rec.price}</span>
-                    </div>
-                    <button class="view-properties-btn" onclick="window.location.href='#properties'">
-                        Смотреть объекты
-                    </button>
-                `;
-                recommendationsList.appendChild(li);
-            });
         }
 
         // Обновление сравнения инвестиций
