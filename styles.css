@@ -1154,131 +1154,125 @@ body.no-scroll {
 
 .investment-comparison-table {
     width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
     margin: 20px 0;
-    border-spacing: 0;
-    border-collapse: separate;
+}
+
+.comparison-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr 2fr;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: bold;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .comparison-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 2fr 2fr;
-    gap: 15px;
+    grid-template-columns: 1fr 1fr 2fr 2fr;
     padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.comparison-row:last-child {
+    border-bottom: none;
+}
+
+.comparison-row:hover {
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    margin-bottom: 10px;
-    opacity: 0;
-    animation: slideIn 0.5s forwards;
 }
 
 .comparison-cell {
     padding: 10px;
+    display: flex;
+    align-items: center;
 }
 
-.comparison-cell.name {
-    font-weight: bold;
-    color: var(--white);
+.investment-name {
+    font-weight: 500;
+    color: #fff;
 }
 
-.comparison-cell.roi {
-    position: relative;
+.roi-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
 }
 
 .roi-value {
-    font-size: 18px;
     font-weight: bold;
-    color: var(--accent-color);
+    color: #e74c3c;
+}
+
+.roi-bar-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
 }
 
 .roi-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 4px;
-    background: var(--accent-color);
-    opacity: 0.3;
-    border-radius: 2px;
-    width: 0;
-    animation: growWidth 1s ease-out forwards;
+    height: 100%;
+    background: #e74c3c;
+    border-radius: 3px;
+    transition: width 0.3s ease;
 }
 
-.comparison-cell ul {
+.benefit-list, .risk-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.comparison-cell li {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 14px;
-    margin-bottom: 5px;
-    padding-left: 20px;
-    position: relative;
+.benefit-list li, .risk-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 8px;
 }
 
-.comparison-cell.benefits li:before {
-    content: '✓';
+.benefit-list li:last-child, .risk-list li:last-child {
+    margin-bottom: 0;
+}
+
+.benefit-icon {
     color: #2ecc71;
-    position: absolute;
-    left: 0;
+    font-weight: bold;
 }
 
-.comparison-cell.risks li:before {
-    content: '!';
+.risk-icon {
     color: #e74c3c;
-    position: absolute;
-    left: 0;
+    font-weight: bold;
+}
+
+.benefit-text, .risk-text {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 @media (max-width: 768px) {
-    .comparison-row {
+    .comparison-header, .comparison-row {
         grid-template-columns: 1fr;
         gap: 10px;
     }
-    
-    .recommendation-details {
-        flex-direction: column;
-    }
-    
-    .investment-comparison-table {
-        font-size: 14px;
-    }
-}
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
+    .comparison-cell {
+        padding: 5px;
     }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
 
-@keyframes growWidth {
-    from {
-        width: 0;
+    .roi-info {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
     }
-    to {
-        width: 100%;
-    }
-}
 
-/* Анимации */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+    .roi-bar-container {
+        width: 60%;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.calculator-results {
-    animation: fadeIn 0.5s ease-out;
 }
 
 /* Comparison Section */

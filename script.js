@@ -32,6 +32,42 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
         console.error('Error initializing components:', error);
     }
+
+    // Populate properties
+    const propertiesGrid = document.querySelector('.properties-grid');
+    if (propertiesGrid) {
+        properties.forEach(property => {
+            const propertyCard = document.createElement('div');
+            propertyCard.className = 'property-card';
+            propertyCard.innerHTML = `
+                <img src="${property.image}" alt="${property.title.ru}">
+                <div class="property-info">
+                    <h3 class="property-title" data-ru="${property.title.ru}" data-en="${property.title.en}">${property.title.ru}</h3>
+                    <p class="property-description" data-ru="${property.description.ru}" data-en="${property.description.en}">${property.description.ru}</p>
+                    <p class="property-price" data-ru="${property.price.ru}" data-en="${property.price.en}">${property.price.ru}</p>
+                    <a href="https://wa.me/message/2OHKSR7E27KVH1?text=" class="cta-button" data-ru="Узнать больше" data-en="Learn more">Узнать больше</a>
+                </div>
+            `;
+            propertiesGrid.appendChild(propertyCard);
+        });
+    }
+
+    // Populate testimonials
+    const testimonialsSlider = document.querySelector('.testimonials-slider');
+    if (testimonialsSlider) {
+        testimonials.forEach(testimonial => {
+            const testimonialCard = document.createElement('div');
+            testimonialCard.className = 'testimonial-card';
+            testimonialCard.innerHTML = `
+                <div class="testimonial-rating">
+                    ${'★'.repeat(testimonial.rating)}${'☆'.repeat(5-testimonial.rating)}
+                </div>
+                <p class="testimonial-text" data-ru="${testimonial.text.ru}" data-en="${testimonial.text.en}">${testimonial.text.ru}</p>
+                <p class="testimonial-name" data-ru="${testimonial.name.ru}" data-en="${testimonial.name.en}">${testimonial.name.ru}</p>
+            `;
+            testimonialsSlider.appendChild(testimonialCard);
+        });
+    }
 });
 
 // Stages accordion functionality
@@ -334,33 +370,35 @@ function initROICalculator() {
 
         // График сравнения
         function updateComparisonChart(yearlyROI) {
+            const canvas = document.getElementById('comparisonChart');
+            if (!canvas) {
+                console.warn('Comparison Chart canvas not found - skipping chart update');
+                return;
+            }
+
             try {
-                const ctx = document.getElementById('comparisonChart');
+                const ctx = canvas.getContext('2d');
                 if (!ctx) {
-                    console.warn('Comparison Chart canvas not found - skipping chart update');
+                    console.warn('Could not get 2D context for comparison chart');
                     return;
                 }
-
-                const context = ctx.getContext('2d');
-                if (!context) {
-                    console.warn('Could not get 2D context for comparison chart - skipping chart update');
-                    return;
-                }
-
-                const data = {
-                    labels: ['Недвижимость Пхукета', 'Банковский депозит', 'Облигации', 'Фондовый рынок'],
-                    datasets: [{
-                        data: [yearlyROI, 3, 5, 8],
-                        backgroundColor: ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f']
-                    }]
-                };
 
                 // Уничтожаем старый график, если он существует
                 if (window.comparisonChart && typeof window.comparisonChart.destroy === 'function') {
                     window.comparisonChart.destroy();
                 }
 
-                window.comparisonChart = new Chart(context, {
+                const data = {
+                    labels: ['Недвижимость Пхукета', 'Банковский депозит', 'Облигации', 'Фондовый рынок'],
+                    datasets: [{
+                        data: [yearlyROI, 3, 5, 8],
+                        backgroundColor: ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f'],
+                        borderColor: ['rgba(231, 76, 60, 1)', 'rgba(52, 152, 219, 1)', 'rgba(46, 204, 113, 1)', 'rgba(241, 196, 15, 1)'],
+                        borderWidth: 1
+                    }]
+                };
+
+                window.comparisonChart = new Chart(ctx, {
                     type: 'bar',
                     data: data,
                     options: {
@@ -375,17 +413,11 @@ function initROICalculator() {
                             y: {
                                 beginAtZero: true,
                                 grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)',
-                                    borderDash: [5, 5]
+                                    color: 'rgba(255, 255, 255, 0.1)'
                                 },
                                 ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)',
-                                    callback: value => value + '%',
-                                    font: {
-                                        size: 12,
-                                        weight: 'bold'
-                                    },
-                                    padding: 10
+                                    color: '#fff',
+                                    callback: value => value + '%'
                                 }
                             },
                             x: {
@@ -393,21 +425,14 @@ function initROICalculator() {
                                     display: false
                                 },
                                 ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)',
-                                    font: {
-                                        size: 12,
-                                        weight: 'bold'
-                                    },
-                                    padding: 10,
-                                    maxRotation: 45,
-                                    minRotation: 45
+                                    color: '#fff'
                                 }
                             }
                         }
                     }
                 });
             } catch (error) {
-                console.warn('Error updating comparison chart:', error);
+                console.warn('Error creating comparison chart:', error);
             }
         }
 
@@ -544,20 +569,56 @@ function initROICalculator() {
                 const table = document.createElement('div');
                 table.className = 'investment-comparison-table';
                 
+                // Добавляем заголовок таблицы
+                const header = document.createElement('div');
+                header.className = 'comparison-header';
+                header.innerHTML = `
+                    <div class="comparison-cell">Тип инвестиции</div>
+                    <div class="comparison-cell">Доходность</div>
+                    <div class="comparison-cell">Преимущества</div>
+                    <div class="comparison-cell">Риски</div>
+                `;
+                table.appendChild(header);
+                
                 comparisonData.forEach(item => {
                     const row = document.createElement('div');
                     row.className = 'comparison-row';
+                    
+                    // Вычисляем максимальную доходность для правильного масштабирования полосы
+                    const maxROI = Math.max(...comparisonData.map(d => d.roi));
+                    const roiPercentage = (item.roi / maxROI) * 100;
+                    
                     row.innerHTML = `
-                        <div class="comparison-cell name">${item.name}</div>
+                        <div class="comparison-cell name">
+                            <span class="investment-name">${item.name}</span>
+                        </div>
                         <div class="comparison-cell roi">
-                            <span class="roi-value">${item.roi}%</span>
-                            <div class="roi-bar" style="width: ${(item.roi / Math.max(...comparisonData.map(d => d.roi))) * 100}%"></div>
+                            <div class="roi-info">
+                                <span class="roi-value">${item.roi.toFixed(1)}%</span>
+                                <div class="roi-bar-container">
+                                    <div class="roi-bar" style="width: ${roiPercentage}%"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="comparison-cell benefits">
-                            <ul>${item.benefits.map(b => `<li>${b}</li>`).join('')}</ul>
+                            <ul class="benefit-list">
+                                ${item.benefits.map(b => `
+                                    <li>
+                                        <span class="benefit-icon">✓</span>
+                                        <span class="benefit-text">${b}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
                         </div>
                         <div class="comparison-cell risks">
-                            <ul>${item.risks.map(r => `<li>${r}</li>`).join('')}</ul>
+                            <ul class="risk-list">
+                                ${item.risks.map(r => `
+                                    <li>
+                                        <span class="risk-icon">✕</span>
+                                        <span class="risk-text">${r}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
                         </div>
                     `;
                     table.appendChild(row);
@@ -568,7 +629,57 @@ function initROICalculator() {
             }
         }
 
-        // Поделиться результатами
+        // Функция для безопасного доступа к localStorage
+        function safeLocalStorage(key, value = null) {
+            try {
+                if (value === null) {
+                    return localStorage.getItem(key);
+                } else {
+                    localStorage.setItem(key, value);
+                }
+            } catch (error) {
+                console.warn('LocalStorage is not available:', error);
+                return null;
+            }
+        }
+
+        // Функция для безопасного доступа к sessionStorage
+        function safeSessionStorage(key, value = null) {
+            try {
+                if (value === null) {
+                    return sessionStorage.getItem(key);
+                } else {
+                    sessionStorage.setItem(key, value);
+                }
+            } catch (error) {
+                console.warn('SessionStorage is not available:', error);
+                return null;
+            }
+        }
+
+        // Функция для копирования текста в буфер обмена
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (error) {
+                console.warn('Clipboard API is not available:', error);
+                try {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    return true;
+                } catch (fallbackError) {
+                    console.error('Fallback clipboard copy failed:', fallbackError);
+                    return false;
+                }
+            }
+        }
+
+        // Обновляем обработчик кнопки "Поделиться"
         elements.shareBtn.addEventListener('click', async () => {
             const text = `Мой расчет доходности недвижимости на Пхукете:\n` +
                         `Ежемесячный доход: ${elements.resultMonthly.textContent}\n` +
@@ -581,25 +692,21 @@ function initROICalculator() {
                         text: text
                     });
                 } else {
-                    // Fallback для браузеров без Web Share API
-                    const textarea = document.createElement('textarea');
-                    textarea.value = text;
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                    alert('Результаты скопированы в буфер обмена');
+                    const copied = await copyToClipboard(text);
+                    if (copied) {
+                        alert('Результаты скопированы в буфер обмена');
+                    } else {
+                        alert('Не удалось скопировать результаты');
+                    }
                 }
             } catch (error) {
                 console.warn('Error sharing results:', error);
-                // Fallback в случае ошибки
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                alert('Результаты скопированы в буфер обмена');
+                const copied = await copyToClipboard(text);
+                if (copied) {
+                    alert('Результаты скопированы в буфер обмена');
+                } else {
+                    alert('Не удалось скопировать результаты');
+                }
             }
         });
 
@@ -885,40 +992,4 @@ const testimonials = [
         },
         rating: 5
     }
-];
-
-// Populate properties
-const propertiesGrid = document.querySelector('.properties-grid');
-if (propertiesGrid) {
-    properties.forEach(property => {
-        const propertyCard = document.createElement('div');
-        propertyCard.className = 'property-card';
-        propertyCard.innerHTML = `
-            <img src="${property.image}" alt="${property.title.ru}">
-            <div class="property-info">
-                <h3 class="property-title" data-ru="${property.title.ru}" data-en="${property.title.en}">${property.title.ru}</h3>
-                <p class="property-description" data-ru="${property.description.ru}" data-en="${property.description.en}">${property.description.ru}</p>
-                <p class="property-price" data-ru="${property.price.ru}" data-en="${property.price.en}">${property.price.ru}</p>
-                <a href="https://wa.me/message/2OHKSR7E27KVH1?text=" class="cta-button" data-ru="Узнать больше" data-en="Learn more">Узнать больше</a>
-            </div>
-        `;
-        propertiesGrid.appendChild(propertyCard);
-    });
-}
-
-// Populate testimonials
-const testimonialsSlider = document.querySelector('.testimonials-slider');
-if (testimonialsSlider) {
-    testimonials.forEach(testimonial => {
-        const testimonialCard = document.createElement('div');
-        testimonialCard.className = 'testimonial-card';
-        testimonialCard.innerHTML = `
-            <div class="testimonial-rating">
-                ${'★'.repeat(testimonial.rating)}${'☆'.repeat(5-testimonial.rating)}
-            </div>
-            <p class="testimonial-text" data-ru="${testimonial.text.ru}" data-en="${testimonial.text.en}">${testimonial.text.ru}</p>
-            <p class="testimonial-name" data-ru="${testimonial.name.ru}" data-en="${testimonial.name.en}">${testimonial.name.ru}</p>
-        `;
-        testimonialsSlider.appendChild(testimonialCard);
-    });
-} 
+]; 
