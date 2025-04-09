@@ -346,7 +346,7 @@ function initROICalculator() {
         const recommendationsList = calculator.querySelector('.recommendations-list');
         recommendationsList.innerHTML = '';
 
-        // Базовые рекомендации из статьи
+        // Базовые рекомендации
         const baseRecommendations = [
             {
                 title: 'Виллы премиум-класса',
@@ -415,23 +415,9 @@ function initROICalculator() {
             `;
             recommendationsList.appendChild(li);
         });
-
-        // Добавляем общие советы
-        const tips = document.createElement('div');
-        tips.className = 'investment-tips';
-        tips.innerHTML = `
-            <h4>Советы инвестору:</h4>
-            <ul>
-                <li>Диверсифицируйте портфель недвижимости</li>
-                <li>Выбирайте районы с развитой инфраструктурой</li>
-                <li>Учитывайте сезонность при планировании дохода</li>
-                <li>Используйте профессиональное управление</li>
-            </ul>
-        `;
-        recommendationsList.appendChild(tips);
     }
 
-    // Добавляем функцию сравнения с другими инвестициями
+    // Обновление сравнения инвестиций
     function updateInvestmentComparison(yearlyROI) {
         const comparisonData = [
             {
