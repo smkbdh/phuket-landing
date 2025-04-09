@@ -346,7 +346,7 @@ function initROICalculator() {
         const recommendationsList = calculator.querySelector('.recommendations-list');
         recommendationsList.innerHTML = '';
 
-        // Базовые рекомендации всегда показываются
+        // Базовые рекомендации из статьи
         const baseRecommendations = [
             {
                 title: 'Виллы премиум-класса',
@@ -442,7 +442,7 @@ function initROICalculator() {
                     'Рост стоимости актива',
                     'Возможность личного использования'
                 ],
-                risks: ['Сезонность спроса']
+                risks: ['Сезонность спроса', 'Расходы на управление и обслуживание']
             },
             {
                 name: 'Банковский депозит',
@@ -451,7 +451,7 @@ function initROICalculator() {
                     'Низкий риск',
                     'Высокая ликвидность'
                 ],
-                risks: ['Низкая доходность']
+                risks: ['Низкая доходность', 'Инфляционные риски']
             },
             {
                 name: 'Облигации',
@@ -469,7 +469,7 @@ function initROICalculator() {
                     'Высокая ликвидность',
                     'Потенциально высокий доход'
                 ],
-                risks: ['Высокая волатильность']
+                risks: ['Высокая волатильность', 'Рыночные риски']
             }
         ];
 

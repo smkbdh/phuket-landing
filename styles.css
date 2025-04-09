@@ -1087,45 +1087,181 @@ body.no-scroll {
 .recommendations-list {
     list-style: none;
     padding: 0;
+    margin: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
 }
 
-.recommendations-list li {
-    margin-bottom: 15px;
-    padding-left: 25px;
-    position: relative;
-    opacity: 0;
-    transform: translateX(-20px);
+.recommendation-item {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
     transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
 }
 
-.recommendations-list li:nth-child(1) { transition-delay: 0.1s; }
-.recommendations-list li:nth-child(2) { transition-delay: 0.2s; }
-.recommendations-list li:nth-child(3) { transition-delay: 0.3s; }
-.recommendations-list li:nth-child(4) { transition-delay: 0.4s; }
-
-.recommendations-list li.visible {
-    opacity: 1;
-    transform: translateX(0);
+.recommendation-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
 }
 
-.recommendations-list li::before {
-    content: "→";
+.recommendation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.recommendation-header h4 {
+    margin: 0;
+    font-size: 20px;
+    color: var(--white);
+}
+
+.roi-badge {
+    background: var(--accent-color);
+    color: var(--white);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.recommendation-description {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.recommendation-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.recommendation-details span {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+.recommendation-details i {
+    margin-right: 5px;
+    color: var(--accent-color);
+}
+
+.investment-comparison-table {
+    width: 100%;
+    margin: 20px 0;
+    border-spacing: 0;
+    border-collapse: separate;
+}
+
+.comparison-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr 2fr;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    opacity: 0;
+    animation: slideIn 0.5s forwards;
+}
+
+.comparison-cell {
+    padding: 10px;
+}
+
+.comparison-cell.name {
+    font-weight: bold;
+    color: var(--white);
+}
+
+.comparison-cell.roi {
+    position: relative;
+}
+
+.roi-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.roi-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: var(--accent-color);
+    opacity: 0.3;
+    border-radius: 2px;
+    width: 0;
+    animation: growWidth 1s ease-out forwards;
+}
+
+.comparison-cell ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.comparison-cell li {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    margin-bottom: 5px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.comparison-cell.benefits li:before {
+    content: '✓';
+    color: #2ecc71;
     position: absolute;
     left: 0;
-    color: var(--secondary-color);
+}
+
+.comparison-cell.risks li:before {
+    content: '!';
+    color: #e74c3c;
+    position: absolute;
+    left: 0;
 }
 
 @media (max-width: 768px) {
-    .calculator-container {
-        padding: 20px;
-    }
-
-    .results-grid {
+    .comparison-row {
         grid-template-columns: 1fr;
+        gap: 10px;
     }
+    
+    .recommendation-details {
+        flex-direction: column;
+    }
+    
+    .investment-comparison-table {
+        font-size: 14px;
+    }
+}
 
-    .chart-container {
-        height: 250px;
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes growWidth {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
     }
 }
 
