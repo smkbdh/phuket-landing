@@ -108,7 +108,7 @@ function initROICalculator() {
     const currencyLabel = calculator.querySelector('.currency-label');
     const shareBtn = calculator.querySelector('.share-btn');
 
-    // Курсы валют (можно заменить на API)
+    // Реальные курсы валют (можно заменить на API)
     const exchangeRates = {
         THB: 1,
         USD: 0.029,
@@ -153,25 +153,41 @@ function initROICalculator() {
         return amount * exchangeRates[toCurrency];
     }
 
-    // Расчет ROI
+    // Расчет ROI с учетом реальных данных
     function calculateROI(investment) {
         if (!investment || isNaN(investment)) {
             alert('Пожалуйста, введите сумму инвестиций');
             return;
         }
 
+        // Реальные данные из статьи
+        const managementFee = 0.2; // 20% комиссия управляющей компании
+        const maintenanceCost = 0.01; // 1% на обслуживание
+        const occupancyRate = 0.85; // 85% заполняемость
         const monthlyYield = parseFloat(yieldInput.value) / 100;
-        const monthlyIncome = investment * monthlyYield;
-        const yearlyROI = monthlyYield * 12 * 100;
+        
+        // Расчет реального дохода
+        const grossMonthlyIncome = investment * monthlyYield;
+        const netMonthlyIncome = grossMonthlyIncome * occupancyRate * (1 - managementFee - maintenanceCost);
+        const yearlyROI = (netMonthlyIncome * 12 / investment) * 100;
 
-        const monthlyIncomeConverted = convertFromTHB(monthlyIncome, currentCurrency);
+        const monthlyIncomeConverted = convertFromTHB(netMonthlyIncome, currentCurrency);
         
         resultMonthly.textContent = formatCurrency(monthlyIncomeConverted, currentCurrency);
         resultYearly.textContent = yearlyROI.toFixed(1) + '%';
 
-        updateCharts(investment, monthlyIncome, yearlyROI);
-        generateRecommendations(yearlyROI);
+        // Показываем результаты с анимацией
         resultsDiv.style.display = 'block';
+        resultsDiv.style.opacity = '0';
+        resultsDiv.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            resultsDiv.style.opacity = '1';
+            resultsDiv.style.transform = 'translateY(0)';
+        }, 100);
+
+        updateCharts(investment, netMonthlyIncome, yearlyROI);
+        generateRecommendations(yearlyROI);
     }
 
     // Форматирование валюты
