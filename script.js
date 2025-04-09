@@ -184,13 +184,18 @@ function initROICalculator() {
         // Обновляем графики и рекомендации
         updateCharts(investment, netMonthlyIncome, yearlyROI);
         generateRecommendations(yearlyROI);
+        updateInvestmentComparison(yearlyROI);
 
-        // Делаем рекомендации видимыми
-        const recommendationItems = document.querySelectorAll('.recommendations-list li');
+        // Плавная прокрутка к результатам
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Анимация появления рекомендаций
+        const recommendationItems = document.querySelectorAll('.recommendation-item');
         recommendationItems.forEach((item, index) => {
             setTimeout(() => {
-                item.classList.add('visible');
-            }, index * 100);
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 200);
         });
     }
 
@@ -294,11 +299,26 @@ function initROICalculator() {
                     y: {
                         beginAtZero: true,
                         grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            borderDash: [5, 5]
                         },
                         ticks: {
                             color: 'rgba(255, 255, 255, 0.7)',
-                            callback: value => value + '%'
+                            callback: value => value + '%',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            },
+                            padding: 10
+                        },
+                        title: {
+                            display: true,
+                            text: 'Годовая доходность',
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
                         }
                     },
                     x: {
@@ -306,7 +326,14 @@ function initROICalculator() {
                             display: false
                         },
                         ticks: {
-                            color: 'rgba(255, 255, 255, 0.7)'
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            },
+                            padding: 10,
+                            maxRotation: 45,
+                            minRotation: 45
                         }
                     }
                 }
@@ -319,18 +346,160 @@ function initROICalculator() {
         const recommendationsList = calculator.querySelector('.recommendations-list');
         recommendationsList.innerHTML = '';
 
-        const recommendations = [
-            'Рассмотрите виллы с гарантированной доходностью',
-            'Диверсифицируйте портфель недвижимости',
-            'Используйте профессиональное управление недвижимостью',
-            'Выбирайте локации с высоким потенциалом роста'
+        // Базовые рекомендации всегда показываются
+        const baseRecommendations = [
+            {
+                title: 'Виллы премиум-класса',
+                description: 'Гарантированная доходность от 10% годовых',
+                roi: '10-12%',
+                location: 'Районы: Лагуна, Банг Тао, Сурин',
+                price: 'от 25,000,000 ฿'
+            },
+            {
+                title: 'Апартаменты с видом на море',
+                description: 'Высокий спрос в высокий сезон',
+                roi: '8-10%',
+                location: 'Районы: Ката, Карон, Раваи',
+                price: 'от 8,000,000 ฿'
+            },
+            {
+                title: 'Таунхаусы',
+                description: 'Стабильный доход от долгосрочной аренды',
+                roi: '6-8%',
+                location: 'Районы: Чалонг, Кату, Таланг',
+                price: 'от 5,000,000 ฿'
+            }
         ];
 
-        recommendations.forEach(rec => {
+        // Дополнительные рекомендации в зависимости от ROI
+        const additionalRecommendations = [];
+        
+        if (yearlyROI > 12) {
+            additionalRecommendations.push({
+                title: 'Люкс виллы первой линии',
+                description: 'Эксклюзивные объекты с максимальной доходностью',
+                roi: '12-15%',
+                location: 'Районы: Камала, Сурин (первая линия)',
+                price: 'от 45,000,000 ฿'
+            });
+        } else if (yearlyROI < 6) {
+            additionalRecommendations.push({
+                title: 'Кондоминиумы',
+                description: 'Доступные инвестиции с низким порогом входа',
+                roi: '5-7%',
+                location: 'Районы: Пхукет Таун, Кату',
+                price: 'от 3,000,000 ฿'
+            });
+        }
+
+        // Объединяем все рекомендации
+        const allRecommendations = [...baseRecommendations, ...additionalRecommendations];
+
+        // Создаем HTML для каждой рекомендации
+        allRecommendations.forEach(rec => {
             const li = document.createElement('li');
-            li.textContent = rec;
+            li.className = 'recommendation-item';
+            li.innerHTML = `
+                <div class="recommendation-header">
+                    <h4>${rec.title}</h4>
+                    <span class="roi-badge">${rec.roi}</span>
+                </div>
+                <p class="recommendation-description">${rec.description}</p>
+                <div class="recommendation-details">
+                    <span class="location"><i class="fas fa-map-marker-alt"></i> ${rec.location}</span>
+                    <span class="price"><i class="fas fa-tag"></i> ${rec.price}</span>
+                </div>
+                <button class="view-properties-btn" onclick="window.location.href='#properties'">
+                    Смотреть объекты
+                </button>
+            `;
             recommendationsList.appendChild(li);
         });
+
+        // Добавляем общие советы
+        const tips = document.createElement('div');
+        tips.className = 'investment-tips';
+        tips.innerHTML = `
+            <h4>Советы инвестору:</h4>
+            <ul>
+                <li>Диверсифицируйте портфель недвижимости</li>
+                <li>Выбирайте районы с развитой инфраструктурой</li>
+                <li>Учитывайте сезонность при планировании дохода</li>
+                <li>Используйте профессиональное управление</li>
+            </ul>
+        `;
+        recommendationsList.appendChild(tips);
+    }
+
+    // Добавляем функцию сравнения с другими инвестициями
+    function updateInvestmentComparison(yearlyROI) {
+        const comparisonData = [
+            {
+                name: 'Недвижимость Пхукета',
+                roi: yearlyROI,
+                benefits: [
+                    'Пассивный доход от аренды',
+                    'Рост стоимости актива',
+                    'Возможность личного использования'
+                ],
+                risks: ['Сезонность спроса']
+            },
+            {
+                name: 'Банковский депозит',
+                roi: 3,
+                benefits: [
+                    'Низкий риск',
+                    'Высокая ликвидность'
+                ],
+                risks: ['Низкая доходность']
+            },
+            {
+                name: 'Облигации',
+                roi: 5,
+                benefits: [
+                    'Стабильный доход',
+                    'Средний риск'
+                ],
+                risks: ['Зависимость от ключевой ставки']
+            },
+            {
+                name: 'Фондовый рынок',
+                roi: 8,
+                benefits: [
+                    'Высокая ликвидность',
+                    'Потенциально высокий доход'
+                ],
+                risks: ['Высокая волатильность']
+            }
+        ];
+
+        const comparisonContainer = document.querySelector('.comparison-section');
+        if (comparisonContainer) {
+            const table = document.createElement('div');
+            table.className = 'investment-comparison-table';
+            
+            comparisonData.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'comparison-row';
+                row.innerHTML = `
+                    <div class="comparison-cell name">${item.name}</div>
+                    <div class="comparison-cell roi">
+                        <span class="roi-value">${item.roi}%</span>
+                        <div class="roi-bar" style="width: ${(item.roi / Math.max(...comparisonData.map(d => d.roi))) * 100}%"></div>
+                    </div>
+                    <div class="comparison-cell benefits">
+                        <ul>${item.benefits.map(b => `<li>${b}</li>`).join('')}</ul>
+                    </div>
+                    <div class="comparison-cell risks">
+                        <ul>${item.risks.map(r => `<li>${r}</li>`).join('')}</ul>
+                    </div>
+                `;
+                table.appendChild(row);
+            });
+            
+            comparisonContainer.innerHTML = '';
+            comparisonContainer.appendChild(table);
+        }
     }
 
     // Поделиться результатами
