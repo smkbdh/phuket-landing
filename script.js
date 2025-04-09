@@ -337,13 +337,13 @@ function initROICalculator() {
             try {
                 const ctx = document.getElementById('comparisonChart');
                 if (!ctx) {
-                    console.error('Comparison Chart canvas not found');
+                    console.warn('Comparison Chart canvas not found - skipping chart update');
                     return;
                 }
 
                 const context = ctx.getContext('2d');
                 if (!context) {
-                    console.error('Could not get 2D context for comparison chart');
+                    console.warn('Could not get 2D context for comparison chart - skipping chart update');
                     return;
                 }
 
@@ -407,7 +407,7 @@ function initROICalculator() {
                     }
                 });
             } catch (error) {
-                console.error('Error updating comparison chart:', error);
+                console.warn('Error updating comparison chart:', error);
             }
         }
 
@@ -420,6 +420,7 @@ function initROICalculator() {
                     return;
                 }
 
+                // Очищаем список только если он существует
                 recommendationsList.innerHTML = '';
 
                 // Базовые рекомендации
@@ -568,18 +569,30 @@ function initROICalculator() {
         }
 
         // Поделиться результатами
-        elements.shareBtn.addEventListener('click', () => {
+        elements.shareBtn.addEventListener('click', async () => {
             const text = `Мой расчет доходности недвижимости на Пхукете:\n` +
                         `Ежемесячный доход: ${elements.resultMonthly.textContent}\n` +
                         `Годовая доходность: ${elements.resultYearly.textContent}`;
             
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Расчет доходности недвижимости на Пхукете',
-                    text: text
-                });
-            } else {
-                // Fallback для браузеров без Web Share API
+            try {
+                if (navigator.share) {
+                    await navigator.share({
+                        title: 'Расчет доходности недвижимости на Пхукете',
+                        text: text
+                    });
+                } else {
+                    // Fallback для браузеров без Web Share API
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    alert('Результаты скопированы в буфер обмена');
+                }
+            } catch (error) {
+                console.warn('Error sharing results:', error);
+                // Fallback в случае ошибки
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
                 document.body.appendChild(textarea);
@@ -876,32 +889,36 @@ const testimonials = [
 
 // Populate properties
 const propertiesGrid = document.querySelector('.properties-grid');
-properties.forEach(property => {
-    const propertyCard = document.createElement('div');
-    propertyCard.className = 'property-card';
-    propertyCard.innerHTML = `
-        <img src="${property.image}" alt="${property.title.ru}">
-        <div class="property-info">
-            <h3 class="property-title" data-ru="${property.title.ru}" data-en="${property.title.en}">${property.title.ru}</h3>
-            <p class="property-description" data-ru="${property.description.ru}" data-en="${property.description.en}">${property.description.ru}</p>
-            <p class="property-price" data-ru="${property.price.ru}" data-en="${property.price.en}">${property.price.ru}</p>
-            <a href="https://wa.me/message/2OHKSR7E27KVH1?text=" class="cta-button" data-ru="Узнать больше" data-en="Learn more">Узнать больше</a>
-        </div>
-    `;
-    propertiesGrid.appendChild(propertyCard);
-});
+if (propertiesGrid) {
+    properties.forEach(property => {
+        const propertyCard = document.createElement('div');
+        propertyCard.className = 'property-card';
+        propertyCard.innerHTML = `
+            <img src="${property.image}" alt="${property.title.ru}">
+            <div class="property-info">
+                <h3 class="property-title" data-ru="${property.title.ru}" data-en="${property.title.en}">${property.title.ru}</h3>
+                <p class="property-description" data-ru="${property.description.ru}" data-en="${property.description.en}">${property.description.ru}</p>
+                <p class="property-price" data-ru="${property.price.ru}" data-en="${property.price.en}">${property.price.ru}</p>
+                <a href="https://wa.me/message/2OHKSR7E27KVH1?text=" class="cta-button" data-ru="Узнать больше" data-en="Learn more">Узнать больше</a>
+            </div>
+        `;
+        propertiesGrid.appendChild(propertyCard);
+    });
+}
 
 // Populate testimonials
 const testimonialsSlider = document.querySelector('.testimonials-slider');
-testimonials.forEach(testimonial => {
-    const testimonialCard = document.createElement('div');
-    testimonialCard.className = 'testimonial-card';
-    testimonialCard.innerHTML = `
-        <div class="testimonial-rating">
-            ${'★'.repeat(testimonial.rating)}${'☆'.repeat(5-testimonial.rating)}
-        </div>
-        <p class="testimonial-text" data-ru="${testimonial.text.ru}" data-en="${testimonial.text.en}">${testimonial.text.ru}</p>
-        <p class="testimonial-name" data-ru="${testimonial.name.ru}" data-en="${testimonial.name.en}">${testimonial.name.ru}</p>
-    `;
-    testimonialsSlider.appendChild(testimonialCard);
-}); 
+if (testimonialsSlider) {
+    testimonials.forEach(testimonial => {
+        const testimonialCard = document.createElement('div');
+        testimonialCard.className = 'testimonial-card';
+        testimonialCard.innerHTML = `
+            <div class="testimonial-rating">
+                ${'★'.repeat(testimonial.rating)}${'☆'.repeat(5-testimonial.rating)}
+            </div>
+            <p class="testimonial-text" data-ru="${testimonial.text.ru}" data-en="${testimonial.text.en}">${testimonial.text.ru}</p>
+            <p class="testimonial-name" data-ru="${testimonial.name.ru}" data-en="${testimonial.name.en}">${testimonial.name.ru}</p>
+        `;
+        testimonialsSlider.appendChild(testimonialCard);
+    });
+} 
