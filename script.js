@@ -176,18 +176,22 @@ function initROICalculator() {
         resultMonthly.textContent = formatCurrency(monthlyIncomeConverted, currentCurrency);
         resultYearly.textContent = yearlyROI.toFixed(1) + '%';
 
-        // Показываем результаты с анимацией
+        // Показываем результаты
         resultsDiv.style.display = 'block';
-        resultsDiv.style.opacity = '0';
-        resultsDiv.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            resultsDiv.style.opacity = '1';
-            resultsDiv.style.transform = 'translateY(0)';
-        }, 100);
+        resultsDiv.style.opacity = '1';
+        resultsDiv.style.transform = 'translateY(0)';
 
+        // Обновляем графики и рекомендации
         updateCharts(investment, netMonthlyIncome, yearlyROI);
         generateRecommendations(yearlyROI);
+
+        // Делаем рекомендации видимыми
+        const recommendationItems = document.querySelectorAll('.recommendations-list li');
+        recommendationItems.forEach((item, index) => {
+            setTimeout(() => {
+                item.classList.add('visible');
+            }, index * 100);
+        });
     }
 
     // Форматирование валюты
