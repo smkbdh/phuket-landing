@@ -375,6 +375,12 @@ function initROICalculator() {
                 console.warn('Comparison Chart canvas not found - skipping chart update');
                 return;
             }
+            
+            // Проверяем, что yearlyROI определен и содержит нужные свойства
+            if (!yearlyROI || typeof yearlyROI !== 'object') {
+                console.warn('Invalid yearlyROI data - skipping chart update');
+                return;
+            }
 
             try {
                 const ctx = canvas.getContext('2d');
@@ -391,7 +397,7 @@ function initROICalculator() {
                 const data = {
                     labels: ['Недвижимость Пхукета', 'Банковский депозит', 'Облигации', 'Фондовый рынок'],
                     datasets: [{
-                        data: [yearlyROI, 3, 5, 8],
+                        data: [yearlyROI || 0, 3, 5, 8],
                         backgroundColor: ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f'],
                         borderColor: ['rgba(231, 76, 60, 1)', 'rgba(52, 152, 219, 1)', 'rgba(46, 204, 113, 1)', 'rgba(241, 196, 15, 1)'],
                         borderWidth: 1
@@ -632,28 +638,34 @@ function initROICalculator() {
         // Функция для безопасного доступа к localStorage
         function safeLocalStorage(key, value = null) {
             try {
+                if (typeof window === 'undefined' || !window.localStorage) {
+                    return value;
+                }
                 if (value === null) {
                     return localStorage.getItem(key);
-                } else {
-                    localStorage.setItem(key, value);
                 }
+                localStorage.setItem(key, value);
+                return value;
             } catch (error) {
                 console.warn('LocalStorage is not available:', error);
-                return null;
+                return value;
             }
         }
 
         // Функция для безопасного доступа к sessionStorage
         function safeSessionStorage(key, value = null) {
             try {
+                if (typeof window === 'undefined' || !window.sessionStorage) {
+                    return value;
+                }
                 if (value === null) {
                     return sessionStorage.getItem(key);
-                } else {
-                    sessionStorage.setItem(key, value);
                 }
+                sessionStorage.setItem(key, value);
+                return value;
             } catch (error) {
                 console.warn('SessionStorage is not available:', error);
-                return null;
+                return value;
             }
         }
 

@@ -14,9 +14,12 @@
 }
 
 body {
-    font-family: 'Arial', 'Noto Sans Thai', sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
 }
 
 body.no-scroll {
@@ -1154,10 +1157,30 @@ body.no-scroll {
 
 .investment-comparison-table {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    overflow: hidden;
+    border-collapse: collapse;
     margin: 20px 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.comparison-cell {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.benefit-list li, .risk-list li {
+    margin-bottom: 8px;
+    padding-left: 25px;
+    position: relative;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.benefit-text, .risk-text {
+    color: rgba(255, 255, 255, 0.9);
+    margin-left: 5px;
 }
 
 .comparison-header {
@@ -1183,12 +1206,6 @@ body.no-scroll {
 
 .comparison-row:hover {
     background: rgba(255, 255, 255, 0.05);
-}
-
-.comparison-cell {
-    padding: 10px;
-    display: flex;
-    align-items: center;
 }
 
 .investment-name {
@@ -1229,13 +1246,6 @@ body.no-scroll {
     margin: 0;
 }
 
-.benefit-list li, .risk-list li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    gap: 8px;
-}
-
 .benefit-list li:last-child, .risk-list li:last-child {
     margin-bottom: 0;
 }
@@ -1251,7 +1261,8 @@ body.no-scroll {
 }
 
 .benefit-text, .risk-text {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
 }
 
 @media (max-width: 768px) {
@@ -2128,4 +2139,43 @@ body::before {
 /* Favicon placeholder */
 link[rel="icon"] {
     display: none;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.section {
+    padding: 60px 0;
+    background-color: #1a1a1a;
+    position: relative;
+    overflow: hidden;
+}
+
+.canvas-container {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    margin: 20px 0;
+    background-color: #1a1a1a;
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+    background-color: transparent;
+}
+
+@media (max-width: 768px) {
+    .section {
+        padding: 40px 0;
+    }
+    
+    .canvas-container {
+        height: 250px;
+    }
 }
