@@ -1,0 +1,5 @@
+[33mcommit a4e6f3434e46ab09f7a0a55c8eeb5cb1ea3f1332[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Aleksandr PhuketStayPro <hum.under@gmail.com>
+Date:   Wed Apr 9 15:57:44 2025 +0700
+
+    Улучшен калькулятор ROI: исправлена работа кнопки расчета, улучшен UX, добавлены подсказки
