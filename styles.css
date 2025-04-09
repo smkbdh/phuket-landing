@@ -2108,3 +2108,17 @@ html, body {
     z-index: 1;
     color: var(--white);
 }
+
+/* Проверка загрузки стилей */
+body::before {
+    content: 'CSS loaded';
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    z-index: 9999;
+}
