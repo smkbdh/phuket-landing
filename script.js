@@ -117,6 +117,10 @@ function initROICalculator() {
 
     let currentCurrency = 'THB';
 
+    // Инициализация начальных значений
+    rangeValue.textContent = '50,000';
+    yieldInput.value = 1;
+
     // Обработка переключения валют
     currencyBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -132,9 +136,11 @@ function initROICalculator() {
         });
     });
 
-    // Обновление значения ползунка
+    // Обновление значения ползунка (теперь показываем сумму в месяц)
     yieldInput.addEventListener('input', () => {
-        rangeValue.textContent = yieldInput.value;
+        const investmentValue = parseFloat(input.value) || 5000000;
+        const monthlyYield = (parseFloat(yieldInput.value) / 100) * investmentValue;
+        rangeValue.textContent = formatCurrency(monthlyYield, currentCurrency);
     });
 
     // Конвертация в THB
@@ -149,6 +155,11 @@ function initROICalculator() {
 
     // Расчет ROI
     function calculateROI(investment) {
+        if (!investment || isNaN(investment)) {
+            alert('Пожалуйста, введите сумму инвестиций');
+            return;
+        }
+
         const monthlyYield = parseFloat(yieldInput.value) / 100;
         const monthlyIncome = investment * monthlyYield;
         const yearlyROI = monthlyYield * 12 * 100;
@@ -331,6 +342,8 @@ function initROICalculator() {
         if (!isNaN(investment)) {
             const thbValue = convertToTHB(investment, currentCurrency);
             calculateROI(thbValue);
+        } else {
+            alert('Пожалуйста, введите корректную сумму инвестиций');
         }
     });
 }

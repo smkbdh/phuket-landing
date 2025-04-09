@@ -76,12 +76,16 @@
                     <label data-ru="Сумма инвестиций" data-en="Investment amount">Сумма инвестиций</label>
                     <input type="number" name="investment" placeholder="5,000,000" min="100000" step="50000">
                     <span class="currency-label">THB</span>
+                    <small class="helper-text" data-ru="Минимальная сумма: 100,000 THB" data-en="Minimum amount: 100,000 THB">Минимальная сумма: 100,000 THB</small>
                 </div>
 
                 <div class="input-group">
-                    <label data-ru="Желаемая доходность в месяц (%)" data-en="Desired monthly yield (%)">Желаемая доходность в месяц (%)</label>
+                    <label data-ru="Ежемесячный доход" data-en="Monthly income">Ежемесячный доход</label>
                     <input type="range" name="yield" min="0.5" max="2" step="0.1" value="1">
-                    <div class="range-value"><span>1</span>%</div>
+                    <div class="range-value">
+                        <span>50,000</span>
+                        <small class="helper-text" data-ru="Передвигайте ползунок, чтобы увидеть ваш потенциальный доход" data-en="Move the slider to see your potential income">Передвигайте ползунок, чтобы увидеть ваш потенциальный доход</small>
+                    </div>
                 </div>
 
                 <button class="calculate-btn" data-ru="Рассчитать" data-en="Calculate">Рассчитать</button>
