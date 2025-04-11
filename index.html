@@ -28,9 +28,13 @@
         <button class="lang-btn" data-lang="en">EN</button>
     </div>
 
-    <header class="hero">
+    <section class="hero">
         <div class="container">
             <div class="hero-content">
+                <div class="hero-badge">
+                    <span>🔥 Ограниченное предложение</span>
+                    <span class="countdown" id="offerCountdown">24:00:00</span>
+                </div>
                 <h1 class="hero-title">Инвестируйте в недвижимость Пхукета с доходностью до 8% годовых</h1>
                 <p class="hero-subtitle">Подбор объекта за 24 часа + гарантия легальности сделки</p>
                 <div class="hero-features">
@@ -39,17 +43,23 @@
                         <span>Бесплатная консультация</span>
                     </div>
                     <div class="feature">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-shield-alt"></i>
                         <span>Юридическое сопровождение</span>
                     </div>
                     <div class="feature">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-chart-line"></i>
                         <span>Помощь в управлении</span>
                     </div>
                 </div>
                 <div class="hero-cta">
-                    <button class="cta-button" onclick="openCalculator()">Рассчитать доходность</button>
-                    <button class="secondary-button" onclick="scrollToContact()">Получить консультацию</button>
+                    <button class="cta-button" onclick="openCalculator()">
+                        <i class="fas fa-calculator"></i>
+                        Рассчитать доходность
+                    </button>
+                    <button class="secondary-button" onclick="scrollToContact()">
+                        <i class="fas fa-phone-alt"></i>
+                        Получить консультацию
+                    </button>
                 </div>
                 <div class="hero-stats">
                     <div class="stat">
@@ -65,9 +75,16 @@
                         <span class="stat-label">Легальность</span>
                     </div>
                 </div>
+                <div class="hero-trust">
+                    <div class="trust-badges">
+                        <img src="https://via.placeholder.com/150x50" alt="Trust Badge 1">
+                        <img src="https://via.placeholder.com/150x50" alt="Trust Badge 2">
+                        <img src="https://via.placeholder.com/150x50" alt="Trust Badge 3">
+                    </div>
+                </div>
             </div>
         </div>
-    </header>
+    </section>
 
     <section id="properties" class="properties">
         <h2 class="section-title" data-ru="Популярные объекты" data-en="Popular properties">Популярные объекты</h2>

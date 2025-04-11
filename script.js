@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         initFAQ();
         initMobileMenu();
         initActiveNavigation();
+        initHeroAnimations();
+        initHeroButtons();
     } catch (error) {
         console.error('Error initializing components:', error);
     }
@@ -821,32 +823,26 @@ function initPriceGrowthChart() {
 
 // Countdown Timer
 function initCountdownTimer() {
-    // Устанавливаем дату окончания акции (30 дней от текущей даты)
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 30);
+    const countdownElement = document.getElementById('offerCountdown');
+    const endTime = new Date();
+    endTime.setHours(endTime.getHours() + 24); // 24 часа от текущего времени
 
     function updateTimer() {
         const now = new Date();
-        const diff = endDate - now;
+        const diff = endTime - now;
 
         if (diff <= 0) {
-            // Если время вышло, обновляем таймер на следующие 30 дней
-            endDate.setDate(endDate.getDate() + 30);
+            countdownElement.textContent = '00:00:00';
             return;
         }
 
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        document.querySelector('.days').textContent = days.toString().padStart(2, '0');
-        document.querySelector('.hours').textContent = hours.toString().padStart(2, '0');
-        document.querySelector('.minutes').textContent = minutes.toString().padStart(2, '0');
-        document.querySelector('.seconds').textContent = seconds.toString().padStart(2, '0');
+        countdownElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
-    // Обновляем таймер каждую секунду
     updateTimer();
     setInterval(updateTimer, 1000);
 }
@@ -1046,4 +1042,48 @@ function scrollToContact() {
     if (contactSection) {
         contactSection.scrollIntoView({ behavior: 'smooth' });
     }
+}
+
+// Анимация появления элементов
+function initHeroAnimations() {
+    const elements = document.querySelectorAll('.hero-badge, .hero-title, .hero-subtitle, .hero-features, .hero-cta, .hero-stats, .hero-trust');
+    
+    elements.forEach((element, index) => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        
+        setTimeout(() => {
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }, 100 * index);
+    });
+}
+
+// Обработка кликов по кнопкам
+function initHeroButtons() {
+    const ctaButton = document.querySelector('.cta-button');
+    const secondaryButton = document.querySelector('.secondary-button');
+
+    ctaButton.addEventListener('click', () => {
+        // Анимация нажатия
+        ctaButton.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            ctaButton.style.transform = 'scale(1)';
+        }, 200);
+        
+        // Открытие калькулятора
+        openCalculator();
+    });
+
+    secondaryButton.addEventListener('click', () => {
+        // Анимация нажатия
+        secondaryButton.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            secondaryButton.style.transform = 'scale(1)';
+        }, 200);
+        
+        // Прокрутка к форме
+        scrollToContact();
+    });
 } 
