@@ -601,63 +601,69 @@ body.no-scroll {
 
 /* Testimonials Section */
 .testimonials {
-    padding: 100px 20px;
-    background: var(--light-bg);
+    padding: 80px 0;
+    background: var(--gradient-primary);
+    position: relative;
 }
 
 .testimonials-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
+    gap: 2rem;
+    padding: 0 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .testimonial-card {
-    background: var(--white);
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .testimonial-card:hover {
-    transform: translateY(-10px);
-}
-
-.testimonial-card::before {
-    content: '"';
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 60px;
-    color: var(--secondary-color);
-    opacity: 0.1;
-    font-family: Georgia, serif;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent);
 }
 
 .testimonial-rating {
-    color: gold;
-    font-size: 20px;
-    margin-bottom: 20px;
+    color: var(--accent);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .testimonial-text {
-    font-style: italic;
-    margin-bottom: 20px;
+    color: var(--white);
+    font-size: 1.1rem;
     line-height: 1.6;
-    color: var(--text-color);
-    position: relative;
-    z-index: 1;
+    margin-bottom: 1rem;
+    flex-grow: 1;
 }
 
 .testimonial-name {
-    font-weight: bold;
-    color: var(--primary-color);
-    font-size: 18px;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-align: right;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        padding: 0 15px;
+    }
+    
+    .testimonial-card {
+        padding: 1.5rem;
+    }
 }
 
 /* Contact Form */
@@ -700,7 +706,7 @@ body.no-scroll {
 .footer {
     background: var(--gradient-primary);
     color: var(--white);
-    padding: 50px 20px;
+    padding: 60px 0 30px;
     position: relative;
 }
 
@@ -710,42 +716,76 @@ body.no-scroll {
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
+    height: 3px;
     background: var(--gradient-accent);
 }
 
 .footer-content {
     max-width: 1200px;
     margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+}
+
+.footer-info h3 {
+    color: var(--accent);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.footer-info p {
+    color: var(--gray-300);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
 }
 
 .footer-contact {
     display: flex;
-    gap: 20px;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .whatsapp-link,
 .instagram-link {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.5rem;
     color: var(--white);
     text-decoration: none;
-    font-size: 18px;
-    transition: opacity 0.3s ease;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
 }
 
 .whatsapp-link:hover,
 .instagram-link:hover {
-    opacity: 0.8;
+    background: rgba(212, 175, 55, 0.1);
+    transform: translateX(5px);
 }
 
 .whatsapp-link i,
 .instagram-link i {
-    font-size: 24px;
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding: 40px 0 20px;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .footer-contact {
+        align-items: center;
+    }
 }
 
 /* Progress Tracker */
