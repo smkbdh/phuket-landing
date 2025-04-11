@@ -168,575 +168,104 @@ function initSmoothScrolling() {
 
 // ROI Calculator functionality
 function initROICalculator() {
-    try {
-        const calculator = document.querySelector('.roi-calculator');
-        if (!calculator) {
-            console.error('Calculator container not found');
-            return;
-        }
+    const calculator = document.querySelector('.roi-calculator');
+    if (!calculator) return;
 
-        const elements = {
-            input: calculator.querySelector('input[name="investment"]'),
-            yieldInput: calculator.querySelector('input[name="yield"]'),
-            rangeValue: calculator.querySelector('.range-value span'),
-            resultMonthly: calculator.querySelector('.monthly-income'),
-            resultYearly: calculator.querySelector('.yearly-roi'),
-            calculateBtn: calculator.querySelector('.calculate-btn'),
-            resultsDiv: calculator.querySelector('.calculator-results'),
-            currencyBtns: calculator.querySelectorAll('.currency-btn'),
-            currencyLabel: calculator.querySelector('.currency-label'),
-            shareBtn: calculator.querySelector('.share-btn')
-        };
+    const elements = {
+        input: calculator.querySelector('input[name="investment"]'),
+        yieldInput: calculator.querySelector('input[name="yield"]'),
+        rangeValue: calculator.querySelector('.range-value span'),
+        resultMonthly: calculator.querySelector('.monthly-income'),
+        resultYearly: calculator.querySelector('.yearly-roi'),
+        calculateBtn: calculator.querySelector('.calculate-btn'),
+        resultsDiv: calculator.querySelector('.calculator-results'),
+        currencyBtns: calculator.querySelectorAll('.currency-btn')
+    };
 
-        if (Object.values(elements).some(el => !el)) {
-            console.error('Some calculator elements not found');
-            return;
-        }
-
-        // Реальные курсы валют (можно заменить на API)
-        const exchangeRates = {
-            THB: 1,
-            USD: 0.029,
-            EUR: 0.026
-        };
-
-        let currentCurrency = 'THB';
-
-        // Инициализация начальных значений
-        elements.rangeValue.textContent = '50,000';
-        elements.yieldInput.value = 1;
-
-        // Обработка переключения валют
-        elements.currencyBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                elements.currencyBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentCurrency = btn.dataset.currency;
-                elements.currencyLabel.textContent = currentCurrency;
-                
-                if (elements.input.value) {
-                    const thbValue = convertToTHB(parseFloat(elements.input.value), currentCurrency);
-                    calculateROI(thbValue);
-                }
-            });
-        });
-
-        // Обновление значения ползунка (теперь показываем сумму в месяц)
-        elements.yieldInput.addEventListener('input', () => {
-            const investmentValue = parseFloat(elements.input.value) || 5000000;
-            const monthlyYield = (parseFloat(elements.yieldInput.value) / 100) * investmentValue;
-            elements.rangeValue.textContent = formatCurrency(monthlyYield, currentCurrency);
-        });
-
-        // Конвертация в THB
-        function convertToTHB(amount, fromCurrency) {
-            return amount / exchangeRates[fromCurrency];
-        }
-
-        // Конвертация из THB
-        function convertFromTHB(amount, toCurrency) {
-            return amount * exchangeRates[toCurrency];
-        }
-
-        // Расчет ROI с учетом реальных данных
-        function calculateROI(investment) {
-            if (!investment || isNaN(investment)) {
-                alert('Пожалуйста, введите сумму инвестиций');
-                return;
-            }
-
-            // Реальные данные из статьи
-            const managementFee = 0.2; // 20% комиссия управляющей компании
-            const maintenanceCost = 0.01; // 1% на обслуживание
-            const occupancyRate = 0.85; // 85% заполняемость
-            const monthlyYield = parseFloat(elements.yieldInput.value) / 100;
-            
-            // Расчет реального дохода
-            const grossMonthlyIncome = investment * monthlyYield;
-            const netMonthlyIncome = grossMonthlyIncome * occupancyRate * (1 - managementFee - maintenanceCost);
-            const yearlyROI = (netMonthlyIncome * 12 / investment) * 100;
-
-            const monthlyIncomeConverted = convertFromTHB(netMonthlyIncome, currentCurrency);
-            
-            elements.resultMonthly.textContent = formatCurrency(monthlyIncomeConverted, currentCurrency);
-            elements.resultYearly.textContent = yearlyROI.toFixed(1) + '%';
-
-            // Показываем результаты
-            elements.resultsDiv.style.display = 'block';
-            elements.resultsDiv.style.opacity = '1';
-            elements.resultsDiv.style.transform = 'translateY(0)';
-
-            // Обновляем графики и рекомендации
-            updateCharts(investment, netMonthlyIncome, yearlyROI);
-            generateRecommendations(yearlyROI);
-            updateInvestmentComparison(yearlyROI);
-
-            // Плавная прокрутка к результатам
-            elements.resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-            // Анимация появления рекомендаций
-            const recommendationItems = document.querySelectorAll('.recommendation-item');
-            recommendationItems.forEach((item, index) => {
-                setTimeout(() => {
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateY(0)';
-                }, index * 200);
-            });
-        }
-
-        // Форматирование валюты
-        function formatCurrency(amount, currency) {
-            const symbols = {
-                THB: '฿',
-                USD: '$',
-                EUR: '€'
-            };
-            return `${symbols[currency]}${amount.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
-        }
-
-        // Обновление графиков
-        function updateCharts(investment, monthlyIncome, yearlyROI) {
-            updateROIChart(investment, monthlyIncome);
-            updateComparisonChart(yearlyROI);
-        }
-
-        // График ROI
-        function updateROIChart(investment, monthlyIncome) {
-            try {
-                const ctx = document.getElementById('roiChart');
-                if (!ctx) {
-                    console.error('ROI Chart canvas not found');
-                    return;
-                }
-
-                const context = ctx.getContext('2d');
-                if (!context) {
-                    console.error('Could not get 2D context for ROI chart');
-                    return;
-                }
-
-                const months = Array.from({length: 12}, (_, i) => i + 1);
-                const values = months.map(month => investment + (monthlyIncome * month));
-
-                // Уничтожаем старый график, если он существует
-                if (window.roiChart && typeof window.roiChart.destroy === 'function') {
-                    window.roiChart.destroy();
-                }
-
-                window.roiChart = new Chart(context, {
-                    type: 'line',
-                    data: {
-                        labels: months,
-                        datasets: [{
-                            label: 'Рост инвестиций',
-                            data: values,
-                            borderColor: '#e74c3c',
-                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)'
-                                }
-                            }
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error('Error updating ROI chart:', error);
-            }
-        }
-
-        // График сравнения
-        function updateComparisonChart(yearlyROI) {
-            const canvas = document.getElementById('comparisonChart');
-            if (!canvas) {
-                console.warn('Comparison Chart canvas not found - skipping chart update');
-                return;
-            }
-            
-            // Проверяем, что yearlyROI определен и содержит нужные свойства
-            if (!yearlyROI || typeof yearlyROI !== 'object') {
-                console.warn('Invalid yearlyROI data - skipping chart update');
-                return;
-            }
-
-            try {
-                const ctx = canvas.getContext('2d');
-                if (!ctx) {
-                    console.warn('Could not get 2D context for comparison chart');
-                    return;
-                }
-
-                // Уничтожаем старый график, если он существует
-                if (window.comparisonChart && typeof window.comparisonChart.destroy === 'function') {
-                    window.comparisonChart.destroy();
-                }
-
-                const data = {
-                    labels: ['Недвижимость Пхукета', 'Банковский депозит', 'Облигации', 'Фондовый рынок'],
-                    datasets: [{
-                        data: [yearlyROI || 0, 3, 5, 8],
-                        backgroundColor: ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f'],
-                        borderColor: ['rgba(231, 76, 60, 1)', 'rgba(52, 152, 219, 1)', 'rgba(46, 204, 113, 1)', 'rgba(241, 196, 15, 1)'],
-                        borderWidth: 1
-                    }]
-                };
-
-                window.comparisonChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: data,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: '#fff',
-                                    callback: value => value + '%'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                },
-                                ticks: {
-                                    color: '#fff'
-                                }
-                            }
-                        }
-                    }
-                });
-            } catch (error) {
-                console.warn('Error creating comparison chart:', error);
-            }
-        }
-
-        // Генерация рекомендаций
-        function generateRecommendations(yearlyROI) {
-            try {
-                const recommendationsList = document.querySelector('.recommendations-list');
-                if (!recommendationsList) {
-                    console.error('Recommendations list container not found');
-                    return;
-                }
-
-                // Очищаем список только если он существует
-                recommendationsList.innerHTML = '';
-
-                // Базовые рекомендации
-                const baseRecommendations = [
-                    {
-                        title: 'Виллы премиум-класса',
-                        description: 'Гарантированная доходность от 10% годовых',
-                        roi: '10-12%',
-                        location: 'Районы: Лагуна, Банг Тао, Сурин',
-                        price: 'от 25,000,000 ฿'
-                    },
-                    {
-                        title: 'Апартаменты с видом на море',
-                        description: 'Высокий спрос в высокий сезон',
-                        roi: '8-10%',
-                        location: 'Районы: Ката, Карон, Раваи',
-                        price: 'от 8,000,000 ฿'
-                    },
-                    {
-                        title: 'Таунхаусы',
-                        description: 'Стабильный доход от долгосрочной аренды',
-                        roi: '6-8%',
-                        location: 'Районы: Чалонг, Кату, Таланг',
-                        price: 'от 5,000,000 ฿'
-                    }
-                ];
-
-                // Дополнительные рекомендации в зависимости от ROI
-                const additionalRecommendations = [];
-                
-                if (yearlyROI > 12) {
-                    additionalRecommendations.push({
-                        title: 'Люкс виллы первой линии',
-                        description: 'Эксклюзивные объекты с максимальной доходностью',
-                        roi: '12-15%',
-                        location: 'Районы: Камала, Сурин (первая линия)',
-                        price: 'от 45,000,000 ฿'
-                    });
-                } else if (yearlyROI < 6) {
-                    additionalRecommendations.push({
-                        title: 'Кондоминиумы',
-                        description: 'Доступные инвестиции с низким порогом входа',
-                        roi: '5-7%',
-                        location: 'Районы: Пхукет Таун, Кату',
-                        price: 'от 3,000,000 ฿'
-                    });
-                }
-
-                // Объединяем все рекомендации
-                const allRecommendations = [...baseRecommendations, ...additionalRecommendations];
-
-                // Создаем и добавляем элементы рекомендаций
-                allRecommendations.forEach((rec, index) => {
-                    const item = document.createElement('li');
-                    item.className = 'recommendation-item';
-                    item.style.animationDelay = `${index * 0.2}s`;
-
-                    item.innerHTML = `
-                        <div class="recommendation-header">
-                            <h4>${rec.title}</h4>
-                            <span class="roi-badge">${rec.roi}</span>
-                        </div>
-                        <p class="recommendation-description">${rec.description}</p>
-                        <div class="recommendation-details">
-                            <p class="location"><i class="fas fa-map-marker-alt"></i> ${rec.location}</p>
-                            <p class="price"><i class="fas fa-tag"></i> ${rec.price}</p>
-                        </div>
-                    `;
-
-                    recommendationsList.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Error generating recommendations:', error);
-            }
-        }
-
-        // Обновление сравнения инвестиций
-        function updateInvestmentComparison(yearlyROI) {
-            const comparisonData = [
-                {
-                    name: 'Недвижимость Пхукета',
-                    roi: yearlyROI,
-                    benefits: [
-                        'Пассивный доход от аренды',
-                        'Рост стоимости актива',
-                        'Возможность личного использования'
-                    ],
-                    risks: ['Сезонность спроса', 'Расходы на управление и обслуживание']
-                },
-                {
-                    name: 'Банковский депозит',
-                    roi: 3,
-                    benefits: [
-                        'Низкий риск',
-                        'Высокая ликвидность'
-                    ],
-                    risks: ['Низкая доходность', 'Инфляционные риски']
-                },
-                {
-                    name: 'Облигации',
-                    roi: 5,
-                    benefits: [
-                        'Стабильный доход',
-                        'Средний риск'
-                    ],
-                    risks: ['Зависимость от ключевой ставки']
-                },
-                {
-                    name: 'Фондовый рынок',
-                    roi: 8,
-                    benefits: [
-                        'Высокая ликвидность',
-                        'Потенциально высокий доход'
-                    ],
-                    risks: ['Высокая волатильность', 'Рыночные риски']
-                }
-            ];
-
-            const comparisonContainer = document.querySelector('.comparison-section');
-            if (comparisonContainer) {
-                const table = document.createElement('div');
-                table.className = 'investment-comparison-table';
-                
-                // Добавляем заголовок таблицы
-                const header = document.createElement('div');
-                header.className = 'comparison-header';
-                header.innerHTML = `
-                    <div class="comparison-cell">Тип инвестиции</div>
-                    <div class="comparison-cell">Доходность</div>
-                    <div class="comparison-cell">Преимущества</div>
-                    <div class="comparison-cell">Риски</div>
-                `;
-                table.appendChild(header);
-                
-                comparisonData.forEach(item => {
-                    const row = document.createElement('div');
-                    row.className = 'comparison-row';
-                    
-                    // Вычисляем максимальную доходность для правильного масштабирования полосы
-                    const maxROI = Math.max(...comparisonData.map(d => d.roi));
-                    const roiPercentage = (item.roi / maxROI) * 100;
-                    
-                    row.innerHTML = `
-                        <div class="comparison-cell name">
-                            <span class="investment-name">${item.name}</span>
-                        </div>
-                        <div class="comparison-cell roi">
-                            <div class="roi-info">
-                                <span class="roi-value">${item.roi.toFixed(1)}%</span>
-                                <div class="roi-bar-container">
-                                    <div class="roi-bar" style="width: ${roiPercentage}%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="comparison-cell benefits">
-                            <ul class="benefit-list">
-                                ${item.benefits.map(b => `
-                                    <li>
-                                        <span class="benefit-icon">✓</span>
-                                        <span class="benefit-text">${b}</span>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
-                        <div class="comparison-cell risks">
-                            <ul class="risk-list">
-                                ${item.risks.map(r => `
-                                    <li>
-                                        <span class="risk-icon">✕</span>
-                                        <span class="risk-text">${r}</span>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
-                    `;
-                    table.appendChild(row);
-                });
-                
-                comparisonContainer.innerHTML = '';
-                comparisonContainer.appendChild(table);
-            }
-        }
-
-        // Функция для безопасного доступа к localStorage
-        function safeLocalStorage(key, value = null) {
-            try {
-                if (typeof window === 'undefined' || !window.localStorage) {
-                    return value;
-                }
-                if (value === null) {
-                    return localStorage.getItem(key);
-                }
-                localStorage.setItem(key, value);
-                return value;
-            } catch (error) {
-                console.warn('LocalStorage is not available:', error);
-                return value;
-            }
-        }
-
-        // Функция для безопасного доступа к sessionStorage
-        function safeSessionStorage(key, value = null) {
-            try {
-                if (typeof window === 'undefined' || !window.sessionStorage) {
-                    return value;
-                }
-                if (value === null) {
-                    return sessionStorage.getItem(key);
-                }
-                sessionStorage.setItem(key, value);
-                return value;
-            } catch (error) {
-                console.warn('SessionStorage is not available:', error);
-                return value;
-            }
-        }
-
-        // Функция для копирования текста в буфер обмена
-        async function copyToClipboard(text) {
-            try {
-                await navigator.clipboard.writeText(text);
-                return true;
-            } catch (error) {
-                console.warn('Clipboard API is not available:', error);
-                try {
-                    const textarea = document.createElement('textarea');
-                    textarea.value = text;
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                    return true;
-                } catch (fallbackError) {
-                    console.error('Fallback clipboard copy failed:', fallbackError);
-                    return false;
-                }
-            }
-        }
-
-        // Обновляем обработчик кнопки "Поделиться"
-        elements.shareBtn.addEventListener('click', async () => {
-            const text = `Мой расчет доходности недвижимости на Пхукете:\n` +
-                        `Ежемесячный доход: ${elements.resultMonthly.textContent}\n` +
-                        `Годовая доходность: ${elements.resultYearly.textContent}`;
-            
-            try {
-                if (navigator.share) {
-                    await navigator.share({
-                        title: 'Расчет доходности недвижимости на Пхукете',
-                        text: text
-                    });
-                } else {
-                    const copied = await copyToClipboard(text);
-                    if (copied) {
-                        alert('Результаты скопированы в буфер обмена');
-                    } else {
-                        alert('Не удалось скопировать результаты');
-                    }
-                }
-            } catch (error) {
-                console.warn('Error sharing results:', error);
-                const copied = await copyToClipboard(text);
-                if (copied) {
-                    alert('Результаты скопированы в буфер обмена');
-                } else {
-                    alert('Не удалось скопировать результаты');
-                }
-            }
-        });
-
-        // Обработчик кнопки расчета
-        elements.calculateBtn.addEventListener('click', () => {
-            const investment = parseFloat(elements.input.value);
-            if (!isNaN(investment)) {
-                const thbValue = convertToTHB(investment, currentCurrency);
-                calculateROI(thbValue);
-            } else {
-                alert('Пожалуйста, введите корректную сумму инвестиций');
-            }
-        });
-    } catch (error) {
-        console.error('Error initializing calculator:', error);
+    // Validate elements
+    if (Object.values(elements).some(el => !el)) {
+        console.error('Some calculator elements not found');
+        return;
     }
+
+    // Currency conversion rates
+    const exchangeRates = {
+        THB: 1,
+        USD: 0.029,
+        EUR: 0.026
+    };
+
+    let currentCurrency = 'THB';
+
+    // Currency switcher
+    elements.currencyBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            elements.currencyBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCurrency = btn.dataset.currency;
+            
+            if (elements.input.value) {
+                calculateROI(parseFloat(elements.input.value));
+            }
+        });
+    });
+
+    // Calculate ROI
+    function calculateROI(investment) {
+        if (!investment || isNaN(investment)) {
+            alert('Пожалуйста, введите корректную сумму инвестиций');
+            return;
+        }
+
+        // Convert to THB if needed
+        const thbInvestment = investment * exchangeRates[currentCurrency];
+        
+        // Calculate returns
+        const monthlyYield = parseFloat(elements.yieldInput.value) / 100;
+        const yearlyYield = monthlyYield * 12;
+        const monthlyIncome = thbInvestment * monthlyYield;
+        
+        // Update results
+        elements.resultMonthly.textContent = formatCurrency(monthlyIncome * exchangeRates[currentCurrency], currentCurrency);
+        elements.resultYearly.textContent = (yearlyYield * 100).toFixed(1) + '%';
+        
+        // Show results with animation
+        elements.resultsDiv.style.display = 'block';
+        setTimeout(() => {
+            elements.resultsDiv.classList.add('visible');
+        }, 50);
+        
+        // Update charts
+        updateCharts(thbInvestment, monthlyIncome, yearlyYield);
+    }
+
+    // Format currency
+    function formatCurrency(amount, currency) {
+        const symbols = {
+            THB: '฿',
+            USD: '$',
+            EUR: '€'
+        };
+        
+        return `${symbols[currency]}${amount.toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        })}`;
+    }
+
+    // Calculate button handler
+    elements.calculateBtn.addEventListener('click', () => {
+        const investment = parseFloat(elements.input.value);
+        if (!isNaN(investment)) {
+            calculateROI(investment);
+        }
+    });
+
+    // Range input handler
+    elements.yieldInput.addEventListener('input', () => {
+        const value = parseFloat(elements.yieldInput.value);
+        elements.rangeValue.textContent = `${value.toFixed(1)}%`;
+    });
 }
 
 // Price Growth Chart
@@ -850,22 +379,46 @@ function initCountdownTimer() {
 }
 
 // FAQ Functionality
-document.querySelectorAll('.faq-question').forEach(question => {
-    question.addEventListener('click', () => {
-        const faqItem = question.parentElement;
-        const isActive = faqItem.classList.contains('active');
+function initFAQ() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
         
-        // Close all FAQ items
-        document.querySelectorAll('.faq-item').forEach(item => {
-            item.classList.remove('active');
-        });
-
-        // Open clicked item if it wasn't active
-        if (!isActive) {
-            faqItem.classList.add('active');
+        if (!question || !answer) return;
+        
+        // Set initial height for smooth animation
+        if (item.classList.contains('active')) {
+            answer.style.maxHeight = answer.scrollHeight + 'px';
         }
+        
+        question.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            
+            // Close all other items
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item) {
+                    otherItem.classList.remove('active');
+                    const otherAnswer = otherItem.querySelector('.faq-answer');
+                    if (otherAnswer) {
+                        otherAnswer.style.maxHeight = '0';
+                    }
+                }
+            });
+            
+            // Toggle current item
+            item.classList.toggle('active');
+            
+            // Update maxHeight for smooth animation
+            if (!isActive) {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+            } else {
+                answer.style.maxHeight = '0';
+            }
+        });
     });
-});
+}
 
 // Mobile Menu
 function initMobileMenu() {
