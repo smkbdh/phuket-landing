@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initActiveNavigation();
         initHeroAnimations();
         initHeroButtons();
+        initLazyLoading();
     } catch (error) {
         console.error('Error initializing components:', error);
     }
@@ -758,4 +759,55 @@ window.addEventListener('scroll', () => {
     }
 
     lastScroll = currentScroll;
-}); 
+});
+
+// Lazy Loading Images
+function initLazyLoading() {
+    const lazyImages = [].slice.call(document.querySelectorAll("img.lazyload"));
+    
+    if ("IntersectionObserver" in window) {
+        let lazyImageObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    let lazyImage = entry.target;
+                    lazyImage.src = lazyImage.dataset.src;
+                    lazyImage.classList.remove("lazyload");
+                    lazyImageObserver.unobserve(lazyImage);
+                }
+            });
+        });
+
+        lazyImages.forEach(function(lazyImage) {
+            lazyImageObserver.observe(lazyImage);
+        });
+    }
+}
+
+// Performance Optimization
+function debounceFn(fn, delay) {
+    let timeoutId;
+    return function (...args) {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(() => {
+            fn.apply(this, args);
+        }, delay);
+    };
+}
+
+// Optimize scroll events
+const optimizedScroll = debounceFn(() => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const header = document.querySelector('.header');
+    
+    if (header) {
+        if (scrollTop > 100) {
+            header.classList.add('header-scrolled');
+        } else {
+            header.classList.remove('header-scrolled');
+        }
+    }
+}, 10);
+
+window.addEventListener('scroll', optimizedScroll); 
