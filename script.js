@@ -824,6 +824,8 @@ function initPriceGrowthChart() {
 // Countdown Timer
 function initCountdownTimer() {
     const countdownElement = document.getElementById('offerCountdown');
+    if (!countdownElement) return;
+
     const endTime = new Date();
     endTime.setHours(endTime.getHours() + 24); // 24 часа от текущего времени
 
@@ -1049,6 +1051,8 @@ function initHeroAnimations() {
     const elements = document.querySelectorAll('.hero-badge, .hero-title, .hero-subtitle, .hero-features, .hero-cta, .hero-stats, .hero-trust');
     
     elements.forEach((element, index) => {
+        if (!element) return;
+        
         element.style.opacity = '0';
         element.style.transform = 'translateY(20px)';
         element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
@@ -1065,25 +1069,25 @@ function initHeroButtons() {
     const ctaButton = document.querySelector('.cta-button');
     const secondaryButton = document.querySelector('.secondary-button');
 
-    ctaButton.addEventListener('click', () => {
-        // Анимация нажатия
-        ctaButton.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            ctaButton.style.transform = 'scale(1)';
-        }, 200);
-        
-        // Открытие калькулятора
-        openCalculator();
-    });
+    if (ctaButton) {
+        ctaButton.addEventListener('click', () => {
+            ctaButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                ctaButton.style.transform = 'scale(1)';
+            }, 200);
+            
+            openCalculator();
+        });
+    }
 
-    secondaryButton.addEventListener('click', () => {
-        // Анимация нажатия
-        secondaryButton.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            secondaryButton.style.transform = 'scale(1)';
-        }, 200);
-        
-        // Прокрутка к форме
-        scrollToContact();
-    });
+    if (secondaryButton) {
+        secondaryButton.addEventListener('click', () => {
+            secondaryButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                secondaryButton.style.transform = 'scale(1)';
+            }, 200);
+            
+            scrollToContact();
+        });
+    }
 } 
