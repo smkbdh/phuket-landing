@@ -23,6 +23,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <header class="header">
+        <div class="header-container">
+            <a href="#" class="logo">Phuket Stay Pro</a>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link">Главная</a>
+                <a href="#calculator" class="nav-link">Калькулятор</a>
+                <a href="#investments" class="nav-link">Инвестиции</a>
+                <a href="#about" class="nav-link">О нас</a>
+                <a href="#contacts" class="nav-link">Контакты</a>
+                <a href="https://wa.me/message/2OHKSR7E27KVH1" class="contact-btn">
+                    <i class="fab fa-whatsapp"></i>
+                    Связаться
+                </a>
+            </nav>
+            <button class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
     <div class="language-switcher">
         <button class="lang-btn active" data-lang="ru">RU</button>
         <button class="lang-btn" data-lang="en">EN</button>
@@ -233,33 +255,37 @@
         </div>
     </section>
 
-    <section id="special-offer" class="special-offer">
+    <section class="special-offer">
         <div class="offer-container">
-            <h2 class="section-title" data-ru="Специальное предложение" data-en="Special offer">Специальное предложение</h2>
+            <div class="offer-badge">
+                <i class="fas fa-fire"></i>
+                <span data-ru="Ограниченное предложение" data-en="Limited time offer">Ограниченное предложение</span>
+            </div>
             <div class="offer-content">
-                <div class="offer-text">
-                    <h3 data-ru="Скидка 5% на виллы" data-en="5% discount on villas">Скидка 5% на виллы</h3>
-                    <p data-ru="При покупке до:" data-en="When purchasing before:">При покупке до:</p>
-                </div>
+                <h2 class="offer-title" data-ru="Инвестируйте сейчас и получите скидку 10%" data-en="Invest now and get 10% discount">Инвестируйте сейчас и получите скидку 10%</h2>
+                <p class="offer-description" data-ru="Только до конца месяца: при покупке недвижимости получите бесплатное юридическое сопровождение и консультацию по управлению недвижимостью" data-en="Until the end of the month: get free legal support and property management consultation with your purchase">Только до конца месяца: при покупке недвижимости получите бесплатное юридическое сопровождение и консультацию по управлению недвижимостью</p>
                 <div class="countdown-timer">
                     <div class="countdown-item">
-                        <span class="days">00</span>
-                        <span class="label" data-ru="дней" data-en="days">дней</span>
+                        <div class="countdown-number" id="days">14</div>
+                        <div class="countdown-label" data-ru="Дней" data-en="Days">Дней</div>
                     </div>
                     <div class="countdown-item">
-                        <span class="hours">00</span>
-                        <span class="label" data-ru="часов" data-en="hours">часов</span>
+                        <div class="countdown-number" id="hours">23</div>
+                        <div class="countdown-label" data-ru="Часов" data-en="Hours">Часов</div>
                     </div>
                     <div class="countdown-item">
-                        <span class="minutes">00</span>
-                        <span class="label" data-ru="минут" data-en="minutes">минут</span>
+                        <div class="countdown-number" id="minutes">45</div>
+                        <div class="countdown-label" data-ru="Минут" data-en="Minutes">Минут</div>
                     </div>
                     <div class="countdown-item">
-                        <span class="seconds">00</span>
-                        <span class="label" data-ru="секунд" data-en="seconds">секунд</span>
+                        <div class="countdown-number" id="seconds">60</div>
+                        <div class="countdown-label" data-ru="Секунд" data-en="Seconds">Секунд</div>
                     </div>
                 </div>
-                <a href="#contact" class="cta-button" data-ru="Получить скидку" data-en="Get discount">Получить скидку</a>
+                <a href="#calculator" class="cta-button">
+                    <i class="fas fa-calculator"></i>
+                    <span data-ru="Рассчитать инвестиции" data-en="Calculate investment">Рассчитать инвестиции</span>
+                </a>
             </div>
         </div>
     </section>
