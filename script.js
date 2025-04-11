@@ -739,8 +739,10 @@ function initROICalculator() {
 
 // Price Growth Chart
 function initPriceGrowthChart() {
-    const ctx = document.getElementById('priceGrowthChart').getContext('2d');
-    new Chart(ctx, {
+    const ctx = document.getElementById('priceGrowthChart');
+    if (!ctx) return;
+
+    new Chart(ctx.getContext('2d'), {
         type: 'line',
         data: {
             labels: ['2020', '2021', '2022', '2023', '2024'],
@@ -748,23 +750,26 @@ function initPriceGrowthChart() {
                 {
                     label: 'Пхукет',
                     data: [100, 110, 125, 145, 160],
-                    borderColor: '#e74c3c',
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
                     tension: 0.4,
-                    fill: false
+                    fill: true
                 },
                 {
                     label: 'Бали',
-                    data: [100, 105, 112, 120, 129],
-                    borderColor: '#3498db',
+                    data: [100, 105, 115, 125, 130],
+                    borderColor: '#2196F3',
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
                     tension: 0.4,
-                    fill: false
+                    fill: true
                 },
                 {
                     label: 'Дубай',
-                    data: [100, 108, 118, 130, 142],
-                    borderColor: '#2ecc71',
+                    data: [100, 108, 120, 135, 145],
+                    borderColor: '#FF9800',
+                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
                     tension: 0.4,
-                    fill: false
+                    fill: true
                 }
             ]
         },
@@ -773,18 +778,41 @@ function initPriceGrowthChart() {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'bottom'
+                    position: 'top',
+                    labels: {
+                        color: '#fff',
+                        font: {
+                            size: 14
+                        }
+                    }
                 },
-                title: {
-                    display: true,
-                    text: 'Динамика роста цен на недвижимость (2020 = 100%)'
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: '#fff',
+                    borderWidth: 1
                 }
             },
             scales: {
                 y: {
-                    beginAtZero: false,
-                    min: 90,
-                    max: 170
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#fff'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#fff'
+                    }
                 }
             }
         }
@@ -1004,4 +1032,18 @@ const testimonials = [
         },
         rating: 5
     }
-]; 
+];
+
+function openCalculator() {
+    const calculatorSection = document.getElementById('roi-calculator');
+    if (calculatorSection) {
+        calculatorSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function scrollToContact() {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+} 
