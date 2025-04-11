@@ -197,6 +197,15 @@ function initROICalculator() {
 
     let currentCurrency = 'THB';
 
+    // Input validation
+    elements.input.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/[^0-9]/g, '');
+        if (value) {
+            value = parseInt(value).toLocaleString();
+        }
+        e.target.value = value;
+    });
+
     // Currency switcher
     elements.currencyBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -205,7 +214,7 @@ function initROICalculator() {
             currentCurrency = btn.dataset.currency;
             
             if (elements.input.value) {
-                calculateROI(parseFloat(elements.input.value));
+                calculateROI(parseFloat(elements.input.value.replace(/,/g, '')));
             }
         });
     });
@@ -225,14 +234,16 @@ function initROICalculator() {
         const yearlyYield = monthlyYield * 12;
         const monthlyIncome = thbInvestment * monthlyYield;
         
-        // Update results
-        elements.resultMonthly.textContent = formatCurrency(monthlyIncome * exchangeRates[currentCurrency], currentCurrency);
-        elements.resultYearly.textContent = (yearlyYield * 100).toFixed(1) + '%';
-        
-        // Show results with animation
+        // Update results with animation
+        elements.resultsDiv.style.opacity = '0';
+        elements.resultsDiv.style.transform = 'translateY(20px)';
         elements.resultsDiv.style.display = 'block';
+        
         setTimeout(() => {
-            elements.resultsDiv.classList.add('visible');
+            elements.resultMonthly.textContent = formatCurrency(monthlyIncome * exchangeRates[currentCurrency], currentCurrency);
+            elements.resultYearly.textContent = (yearlyYield * 100).toFixed(1) + '%';
+            elements.resultsDiv.style.opacity = '1';
+            elements.resultsDiv.style.transform = 'translateY(0)';
         }, 50);
         
         // Update charts
@@ -247,24 +258,27 @@ function initROICalculator() {
             EUR: '€'
         };
         
-        return `${symbols[currency]}${amount.toLocaleString(undefined, {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        })}`;
+        return `${symbols[currency]}${Math.round(amount).toLocaleString()}`;
     }
 
     // Calculate button handler
     elements.calculateBtn.addEventListener('click', () => {
-        const investment = parseFloat(elements.input.value);
+        const investment = parseFloat(elements.input.value.replace(/,/g, ''));
         if (!isNaN(investment)) {
             calculateROI(investment);
         }
     });
 
-    // Range input handler
+    // Range input handler with smooth update
     elements.yieldInput.addEventListener('input', () => {
         const value = parseFloat(elements.yieldInput.value);
-        elements.rangeValue.textContent = `${value.toFixed(1)}%`;
+        if (elements.rangeValue) {
+            elements.rangeValue.textContent = `${value.toFixed(1)}%`;
+            elements.rangeValue.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                elements.rangeValue.style.transform = 'scale(1)';
+            }, 200);
+        }
     });
 }
 
@@ -273,7 +287,7 @@ function initPriceGrowthChart() {
     const ctx = document.getElementById('priceGrowthChart');
     if (!ctx) return;
 
-    new Chart(ctx.getContext('2d'), {
+    const chart = new Chart(ctx.getContext('2d'), {
         type: 'line',
         data: {
             labels: ['2020', '2021', '2022', '2023', '2024'],
@@ -284,7 +298,8 @@ function initPriceGrowthChart() {
                     borderColor: '#4CAF50',
                     backgroundColor: 'rgba(76, 175, 80, 0.1)',
                     tension: 0.4,
-                    fill: true
+                    fill: true,
+                    borderWidth: 2
                 },
                 {
                     label: 'Бали',
@@ -292,7 +307,8 @@ function initPriceGrowthChart() {
                     borderColor: '#2196F3',
                     backgroundColor: 'rgba(33, 150, 243, 0.1)',
                     tension: 0.4,
-                    fill: true
+                    fill: true,
+                    borderWidth: 2
                 },
                 {
                     label: 'Дубай',
@@ -300,21 +316,30 @@ function initPriceGrowthChart() {
                     borderColor: '#FF9800',
                     backgroundColor: 'rgba(255, 152, 0, 0.1)',
                     tension: 0.4,
-                    fill: true
+                    fill: true,
+                    borderWidth: 2
                 }
             ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
             plugins: {
                 legend: {
                     position: 'top',
                     labels: {
                         color: '#fff',
                         font: {
-                            size: 14
-                        }
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
                     }
                 },
                 tooltip: {
@@ -323,59 +348,110 @@ function initPriceGrowthChart() {
                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
                     titleColor: '#fff',
                     bodyColor: '#fff',
-                    borderColor: '#fff',
-                    borderWidth: 1
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y + '%';
+                        }
+                    }
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
                     grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        drawBorder: false
                     },
                     ticks: {
-                        color: '#fff'
+                        color: '#fff',
+                        font: {
+                            size: 12
+                        },
+                        callback: function(value) {
+                            return value + '%';
+                        }
                     }
                 },
                 x: {
                     grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        drawBorder: false
                     },
                     ticks: {
-                        color: '#fff'
+                        color: '#fff',
+                        font: {
+                            size: 12
+                        }
                     }
                 }
             }
         }
     });
+
+    // Responsive font size
+    function updateFontSize() {
+        const width = window.innerWidth;
+        const baseFontSize = width < 768 ? 10 : 14;
+        
+        chart.options.plugins.legend.labels.font.size = baseFontSize;
+        chart.options.scales.x.ticks.font.size = baseFontSize;
+        chart.options.scales.y.ticks.font.size = baseFontSize;
+        chart.update();
+    }
+
+    window.addEventListener('resize', updateFontSize);
+    updateFontSize();
 }
 
-// Countdown Timer
-function initCountdownTimer() {
-    const countdownElement = document.getElementById('offerCountdown');
-    if (!countdownElement) return;
+// Countdown Timer with smooth animation
+function updateCountdown() {
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 14); // 14 days from now
+    endDate.setHours(23, 59, 59);
 
-    const endTime = new Date();
-    endTime.setHours(endTime.getHours() + 24); // 24 часа от текущего времени
-
-    function updateTimer() {
+    function update() {
         const now = new Date();
-        const diff = endTime - now;
+        const diff = endDate - now;
 
         if (diff <= 0) {
-            countdownElement.textContent = '00:00:00';
+            clearInterval(timer);
             return;
         }
 
-        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        countdownElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        updateCountdownElement('days', days);
+        updateCountdownElement('hours', hours);
+        updateCountdownElement('minutes', minutes);
+        updateCountdownElement('seconds', seconds);
     }
 
-    updateTimer();
-    setInterval(updateTimer, 1000);
+    function updateCountdownElement(id, value) {
+        const element = document.getElementById(id);
+        if (!element) return;
+
+        const newValue = String(value).padStart(2, '0');
+        if (element.textContent !== newValue) {
+            element.style.transform = 'translateY(-10px)';
+            element.style.opacity = '0';
+            
+            setTimeout(() => {
+                element.textContent = newValue;
+                element.style.transform = 'translateY(0)';
+                element.style.opacity = '1';
+            }, 100);
+        }
+    }
+
+    update();
+    const timer = setInterval(update, 1000);
 }
 
 // FAQ Functionality
@@ -658,38 +734,6 @@ document.querySelectorAll('.nav-link').forEach(link => {
         navMenu.classList.remove('active');
     });
 });
-
-// Countdown Timer
-function updateCountdown() {
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 14); // 14 days from now
-    endDate.setHours(23, 59, 59);
-
-    function update() {
-        const now = new Date();
-        const diff = endDate - now;
-
-        if (diff <= 0) {
-            clearInterval(timer);
-            return;
-        }
-
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        document.getElementById('days').textContent = String(days).padStart(2, '0');
-        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-    }
-
-    update();
-    const timer = setInterval(update, 1000);
-}
-
-updateCountdown();
 
 // Sticky Header Animation
 const header = document.querySelector('.header');
