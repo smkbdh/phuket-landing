@@ -383,12 +383,11 @@ body.no-scroll {
 }
 
 .countdown {
-    background: var(--primary-dark);
-    color: var(--white);
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff4d4d;
+    text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+    animation: pulse 1s infinite;
 }
 
 @keyframes pulse {
@@ -593,8 +592,11 @@ body.no-scroll {
 }
 
 .property-description {
-    margin-bottom: 15px;
-    color: var(--text-color);
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 10px 0;
+    opacity: 1;
 }
 
 .property-price {
@@ -1043,37 +1045,32 @@ body.no-scroll {
 }
 
 .stages-accordion {
-    max-width: 1000px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
 .stage-item {
-    background: var(--white);
-    border-radius: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
     overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-}
-
-.stage-item:hover {
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
 }
 
 .stage-header {
+    padding: 15px;
+    background: #f5f5f5;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    padding: 25px 30px;
-    cursor: pointer;
-    position: relative;
-    background: var(--white);
-    transition: background-color 0.3s ease;
 }
 
-.stage-item.active .stage-header {
-    background: rgba(231, 76, 60, 0.03);
+.stage-content {
+    padding: 15px;
+    display: none;
+}
+
+.stage-item.active .stage-content {
+    display: block;
 }
 
 .stage-number {
@@ -1131,20 +1128,6 @@ body.no-scroll {
     transform: rotate(45deg);
     background: var(--secondary-color);
     color: var(--white);
-}
-
-.stage-content {
-    padding: 0;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: all 0.4s ease-in-out;
-}
-
-.stage-item.active .stage-content {
-    padding: 0 30px 30px 100px;
-    max-height: 500px;
-    opacity: 1;
 }
 
 .stage-content p {
@@ -1274,13 +1257,11 @@ body.no-scroll {
 
 .input-group input[type="number"] {
     width: 100%;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    color: #fff;
-    font-size: 16px;
-    transition: all 0.3s ease;
+    padding: 10px;
+    font-size: 1.2rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s;
 }
 
 .input-group input[type="number"]:focus {
@@ -1314,13 +1295,11 @@ body.no-scroll {
 }
 
 .calculator-results {
-    margin-top: 40px;
-    padding: 30px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s ease;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    margin-top: 20px;
 }
 
 .calculator-results.visible {
@@ -1376,12 +1355,10 @@ body.no-scroll {
 }
 
 .faq-item {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
     overflow: hidden;
-    transition: all 0.3s ease;
 }
 
 .faq-item:hover {
@@ -1391,14 +1368,12 @@ body.no-scroll {
 }
 
 .faq-question {
-    padding: 20px;
+    padding: 15px;
+    background: #f5f5f5;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #fff;
-    font-weight: 500;
-    position: relative;
 }
 
 .faq-question h3 {
@@ -1418,12 +1393,8 @@ body.no-scroll {
 }
 
 .faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-    padding: 0 20px;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.6;
+    padding: 15px;
+    display: none;
 }
 
 .faq-item.active .faq-question i {
@@ -1431,8 +1402,7 @@ body.no-scroll {
 }
 
 .faq-item.active .faq-answer {
-    max-height: 500px;
-    padding: 0 20px 20px;
+    display: block;
 }
 
 /* Why Choose Us Section */
@@ -2187,13 +2157,11 @@ canvas {
 
 /* ROI Calculator Results */
 .calculator-results {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 15px;
-    padding: 2rem;
-    margin-top: 2rem;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s ease;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    margin-top: 20px;
 }
 
 .calculator-results.visible {
@@ -2436,4 +2404,117 @@ canvas {
 
 .animate-pulse {
     animation: pulse 2s infinite;
+}
+
+/* Стили для сравнения */
+.comparison-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.comparison-table th {
+    background: #f5f5f5;
+    font-weight: bold;
+}
+
+/* Стили для этапов */
+.stages-accordion {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.stage-item {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.stage-header {
+    padding: 15px;
+    background: #f5f5f5;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.stage-content {
+    padding: 15px;
+    display: none;
+}
+
+.stage-item.active .stage-content {
+    display: block;
+}
+
+/* Стили для партнеров */
+.partners {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.partners h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.partners-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.partner-logo {
+    padding: 15px 30px;
+    background: #f5f5f5;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Стили для рекомендаций */
+.recommendations {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+.recommendations h4 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.recommendations-list {
+    list-style: none;
+    padding: 0;
+}
+
+.recommendations-list li {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.recommendations-list li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #4CAF50;
 }

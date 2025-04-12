@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initHeroAnimations();
         initHeroButtons();
         initLazyLoading();
+        initStages();
     } catch (error) {
         console.error('Error initializing components:', error);
     }
@@ -183,22 +184,10 @@ function initROICalculator() {
         currencyBtns: calculator.querySelectorAll('.currency-btn')
     };
 
-    // Validate elements
-    if (Object.values(elements).some(el => !el)) {
-        console.error('Some calculator elements not found');
-        return;
-    }
-
-    // Currency conversion rates
-    const exchangeRates = {
-        THB: 1,
-        USD: 0.029,
-        EUR: 0.026
-    };
-
-    let currentCurrency = 'THB';
-
-    // Input validation
+    // Убираем ограничение на количество цифр
+    elements.input.removeAttribute('maxlength');
+    
+    // Обновляем значение при вводе
     elements.input.addEventListener('input', (e) => {
         let value = e.target.value.replace(/[^0-9]/g, '');
         if (value) {
@@ -207,78 +196,41 @@ function initROICalculator() {
         e.target.value = value;
     });
 
-    // Currency switcher
-    elements.currencyBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            elements.currencyBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentCurrency = btn.dataset.currency;
-            
-            if (elements.input.value) {
-                calculateROI(parseFloat(elements.input.value.replace(/,/g, '')));
-            }
-        });
-    });
-
-    // Calculate ROI
-    function calculateROI(investment) {
-        if (!investment || isNaN(investment)) {
-            alert('Пожалуйста, введите корректную сумму инвестиций');
-            return;
-        }
-
-        // Convert to THB if needed
-        const thbInvestment = investment * exchangeRates[currentCurrency];
-        
-        // Calculate returns
-        const monthlyYield = parseFloat(elements.yieldInput.value) / 100;
-        const yearlyYield = monthlyYield * 12;
-        const monthlyIncome = thbInvestment * monthlyYield;
-        
-        // Update results with animation
-        elements.resultsDiv.style.opacity = '0';
-        elements.resultsDiv.style.transform = 'translateY(20px)';
-        elements.resultsDiv.style.display = 'block';
-        
-        setTimeout(() => {
-            elements.resultMonthly.textContent = formatCurrency(monthlyIncome * exchangeRates[currentCurrency], currentCurrency);
-            elements.resultYearly.textContent = (yearlyYield * 100).toFixed(1) + '%';
-            elements.resultsDiv.style.opacity = '1';
-            elements.resultsDiv.style.transform = 'translateY(0)';
-        }, 50);
-        
-        // Update charts
-        updateCharts(thbInvestment, monthlyIncome, yearlyYield);
-    }
-
-    // Format currency
-    function formatCurrency(amount, currency) {
-        const symbols = {
-            THB: '฿',
-            USD: '$',
-            EUR: '€'
-        };
-        
-        return `${symbols[currency]}${Math.round(amount).toLocaleString()}`;
-    }
-
-    // Calculate button handler
-    elements.calculateBtn.addEventListener('click', () => {
-        const investment = parseFloat(elements.input.value.replace(/,/g, ''));
-        if (!isNaN(investment)) {
-            calculateROI(investment);
-        }
-    });
-
-    // Range input handler with smooth update
+    // Обновляем слайдер
     elements.yieldInput.addEventListener('input', () => {
         const value = parseFloat(elements.yieldInput.value);
-        if (elements.rangeValue) {
-            elements.rangeValue.textContent = `${value.toFixed(1)}%`;
-            elements.rangeValue.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                elements.rangeValue.style.transform = 'scale(1)';
-            }, 200);
+        elements.rangeValue.textContent = `${value.toFixed(1)}%`;
+    });
+
+    // Обработка кнопки расчета
+    elements.calculateBtn.addEventListener('click', () => {
+        const investment = parseFloat(elements.input.value.replace(/,/g, ''));
+        const yield = parseFloat(elements.yieldInput.value);
+        
+        if (!isNaN(investment) && !isNaN(yield)) {
+            const monthlyIncome = (investment * yield / 100).toLocaleString();
+            const yearlyROI = (yield * 12).toFixed(1);
+            
+            elements.resultMonthly.textContent = `${monthlyIncome} THB`;
+            elements.resultYearly.textContent = `${yearlyROI}%`;
+            
+            // Показываем результаты
+            elements.resultsDiv.style.display = 'block';
+            
+            // Добавляем рекомендации
+            const recommendations = [
+                'Инвестируйте в недвижимость с высоким потенциалом роста',
+                'Рассмотрите варианты с готовой арендной программой',
+                'Обратите внимание на объекты в перспективных районах',
+                'Используйте налоговые льготы для инвесторов'
+            ];
+            
+            const recommendationsList = document.querySelector('.recommendations-list');
+            if (recommendationsList) {
+                recommendationsList.innerHTML = recommendations
+                    .map(rec => `<li>${rec}</li>`)
+                    .join('');
+            }
         }
     });
 }
@@ -463,35 +415,17 @@ function initFAQ() {
         const question = item.querySelector('.faq-question');
         const answer = item.querySelector('.faq-answer');
         
-        if (!question || !answer) return;
-        
-        // Set initial height for smooth animation
-        if (item.classList.contains('active')) {
-            answer.style.maxHeight = answer.scrollHeight + 'px';
-        }
-        
         question.addEventListener('click', () => {
             const isActive = item.classList.contains('active');
             
-            // Close all other items
+            // Закрываем все элементы
             faqItems.forEach(otherItem => {
-                if (otherItem !== item) {
-                    otherItem.classList.remove('active');
-                    const otherAnswer = otherItem.querySelector('.faq-answer');
-                    if (otherAnswer) {
-                        otherAnswer.style.maxHeight = '0';
-                    }
-                }
+                otherItem.classList.remove('active');
             });
             
-            // Toggle current item
-            item.classList.toggle('active');
-            
-            // Update maxHeight for smooth animation
+            // Открываем текущий элемент
             if (!isActive) {
-                answer.style.maxHeight = answer.scrollHeight + 'px';
-            } else {
-                answer.style.maxHeight = '0';
+                item.classList.add('active');
             }
         });
     });
@@ -810,4 +744,28 @@ const optimizedScroll = debounceFn(() => {
     }
 }, 10);
 
-window.addEventListener('scroll', optimizedScroll); 
+window.addEventListener('scroll', optimizedScroll);
+
+// Исправление этапов
+function initStages() {
+    const stageItems = document.querySelectorAll('.stage-item');
+    
+    stageItems.forEach(item => {
+        const header = item.querySelector('.stage-header');
+        const content = item.querySelector('.stage-content');
+        
+        header.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            
+            // Закрываем все элементы
+            stageItems.forEach(otherItem => {
+                otherItem.classList.remove('active');
+            });
+            
+            // Открываем текущий элемент
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        });
+    });
+} 
