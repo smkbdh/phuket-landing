@@ -171,69 +171,28 @@
     <section id="roi-calculator" class="roi-calculator">
         <div class="calculator-bg-overlay"></div>
         <h2 class="section-title" data-ru="Рассчитайте свою доходность" data-en="Calculate your ROI">Рассчитайте свою доходность</h2>
-        <div class="calculator-container">
-            <div class="calculator-input">
-                <div class="currency-switcher">
-                    <button class="currency-btn active" data-currency="THB">THB</button>
-                    <button class="currency-btn" data-currency="USD">USD</button>
-                    <button class="currency-btn" data-currency="EUR">EUR</button>
-                </div>
-                
-                <div class="input-group">
-                    <label data-ru="Сумма инвестиций" data-en="Investment amount">Сумма инвестиций</label>
-                    <input type="number" name="investment" placeholder="5,000,000" min="100000" step="50000">
-                    <span class="currency-label">THB</span>
-                    <small class="helper-text" data-ru="Минимальная сумма: 100,000 THB" data-en="Minimum amount: 100,000 THB">Минимальная сумма: 100,000 THB</small>
-                </div>
-
-                <div class="input-group">
-                    <label data-ru="Ежемесячный доход" data-en="Monthly income">Ежемесячный доход</label>
-                    <input type="range" name="yield" min="0.5" max="2" step="0.1" value="1">
-                    <div class="range-value">
-                        <span>50,000</span>
-                        <small class="helper-text" data-ru="Передвигайте ползунок, чтобы увидеть ваш потенциальный доход" data-en="Move the slider to see your potential income">Передвигайте ползунок, чтобы увидеть ваш потенциальный доход</small>
+        <div class="calculator-section">
+            <div class="calculator">
+                <h3 class="calculator-title" data-ru="Калькулятор ROI" data-en="ROI Calculator">Калькулятор ROI</h3>
+                <form class="calculator-form">
+                    <div class="form-group">
+                        <label class="form-label" data-ru="Сумма инвестиций (THB)" data-en="Investment Amount (THB)">Сумма инвестиций (THB)</label>
+                        <input type="number" name="investment" class="form-input" required min="0" step="1000">
                     </div>
-                </div>
-
-                <button class="calculate-btn" data-ru="Рассчитать" data-en="Calculate">Рассчитать</button>
-            </div>
-
-            <div class="calculator-results" style="display: none;">
-                <div class="results-header">
-                    <h3 data-ru="Ваш потенциальный доход" data-en="Your potential income">Ваш потенциальный доход</h3>
-                    <button class="share-btn" title="Поделиться результатом">
-                        <i class="fas fa-share-alt"></i>
-                    </button>
-                </div>
-
-                <div class="results-grid">
-                    <div class="result-item">
-                        <span class="result-label" data-ru="Ежемесячный доход:" data-en="Monthly income:">Ежемесячный доход:</span>
-                        <span class="monthly-income result-value">0</span>
+                    <div class="form-group">
+                        <label class="form-label" data-ru="Ежемесячный доход от аренды (THB)" data-en="Monthly Rental Income (THB)">Ежемесячный доход от аренды (THB)</label>
+                        <input type="number" name="rental_income" class="form-input" required min="0" step="1000">
                     </div>
-                    <div class="result-item">
-                        <span class="result-label" data-ru="Годовая доходность:" data-en="Annual ROI:">Годовая доходность:</span>
-                        <span class="yearly-roi result-value">0%</span>
+                    <div class="form-group">
+                        <label class="form-label" data-ru="Ежемесячные расходы (THB)" data-en="Monthly Expenses (THB)">Ежемесячные расходы (THB)</label>
+                        <input type="number" name="expenses" class="form-input" required min="0" step="1000">
                     </div>
+                    <button type="submit" class="calculator-button" data-ru="Рассчитать" data-en="Calculate">Рассчитать</button>
+                </form>
+                <div class="calculator-result">
+                    <span class="result-value">0%</span>
+                    <span class="result-label" data-ru="Годовая доходность от инвестиций" data-en="Annual Return on Investment">Годовая доходность от инвестиций</span>
                 </div>
-
-                <div class="chart-container">
-                    <canvas id="roiChart"></canvas>
-                </div>
-
-                <div class="comparison-section">
-                    <h4 data-ru="Сравнение с другими инвестициями" data-en="Comparison with other investments">Сравнение с другими инвестициями</h4>
-                    <!-- Сюда будет добавлена таблица сравнения через JavaScript -->
-                </div>
-
-                <div class="recommendations">
-                    <h4 data-ru="Рекомендации по инвестициям" data-en="Investment recommendations">Рекомендации по инвестициям</h4>
-                    <ul class="recommendations-list">
-                        <!-- Сюда будут добавлены рекомендации через JavaScript -->
-                    </ul>
-                </div>
-
-                <a href="#contact" class="cta-button" data-ru="✅ Получить персональный инвестиционный план" data-en="✅ Get personal investment plan">✅ Получить персональный инвестиционный план</a>
             </div>
         </div>
     </section>
@@ -515,6 +474,8 @@
         <h2 class="section-title" data-ru="Связаться с нами" data-en="Contact us">Связаться с нами</h2>
         <form id="contact-form" class="contact-form">
             <input type="text" name="name" placeholder="Ваше имя" data-ru="Ваше имя" data-en="Your name" required>
+            <input type="email" name="email" placeholder="Ваш email" data-ru="Ваш email" data-en="Your email" required>
+            <input type="tel" name="phone" placeholder="Ваш телефон" data-ru="Ваш телефон" data-en="Your phone" required>
             <button type="submit" class="submit-button" data-ru="Отправить заявку" data-en="Submit request">Отправить заявку</button>
         </form>
     </section>

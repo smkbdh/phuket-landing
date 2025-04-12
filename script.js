@@ -1,7 +1,7 @@
 // Определение данных для объектов недвижимости
 const properties = [
     {
-        image: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf",
+        image: "https://images.pexels.com/photos/32870/pexels-photo.jpg",
         title: {
             ru: "Вилла с видом на море",
             en: "Sea View Villa"
@@ -16,7 +16,7 @@ const properties = [
         }
     },
     {
-        image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6",
+        image: "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg",
         title: {
             ru: "Апартаменты в кондоминиуме",
             en: "Condominium Apartment"
@@ -28,6 +28,36 @@ const properties = [
         price: {
             ru: "от 8,000,000 THB",
             en: "from 8,000,000 THB"
+        }
+    },
+    {
+        image: "https://images.pexels.com/photos/1438832/pexels-photo-1438832.jpeg",
+        title: {
+            ru: "Пентхаус с террасой",
+            en: "Penthouse with Terrace"
+        },
+        description: {
+            ru: "Эксклюзивный пентхаус с просторной террасой и джакузи",
+            en: "Exclusive penthouse with spacious terrace and jacuzzi"
+        },
+        price: {
+            ru: "от 15,000,000 THB",
+            en: "from 15,000,000 THB"
+        }
+    },
+    {
+        image: "https://images.pexels.com/photos/1732414/pexels-photo-1732414.jpeg",
+        title: {
+            ru: "Вилла с бассейном",
+            en: "Pool Villa"
+        },
+        description: {
+            ru: "Современная вилла с частным бассейном и тропическим садом",
+            en: "Modern villa with private pool and tropical garden"
+        },
+        price: {
+            ru: "от 20,000,000 THB",
+            en: "from 20,000,000 THB"
         }
     }
 ];
@@ -234,6 +264,10 @@ document.addEventListener('DOMContentLoaded', () => {
         initHeroButtons();
         initLazyLoading();
         initStages();
+        initStickyHeader();
+        initScrollProgress();
+        initWhyUsAnimations();
+        checkTextRendering();
     } catch (error) {
         console.error('Error initializing components:', error);
     }
@@ -288,6 +322,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     images.forEach(img => imageObserver.observe(img));
+
+    // Проверка текста при изменении размера окна
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(checkTextRendering, 250);
+    });
 });
 
 // Stages accordion functionality
@@ -326,28 +367,126 @@ function initAccordion() {
     });
 }
 
-// Language switching functionality
+// Улучшенная функция смены языка с анимацией
 function initLanguageSwitcher() {
     const langButtons = document.querySelectorAll('.lang-btn');
     const elementsWithData = document.querySelectorAll('[data-ru][data-en]');
-
+    
+    // Установка начального языка
+    const currentLang = localStorage.getItem('language') || 'ru';
+    document.documentElement.lang = currentLang;
+    
+    // Функция анимированной смены текста
+    function animateTextChange(element, newText) {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(10px)';
+        
+        setTimeout(() => {
+            if (element.tagName === 'INPUT') {
+                element.placeholder = newText;
+            } else {
+                element.textContent = newText;
+            }
+            
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }, 200);
+    }
+    
+    // Активация соответствующей кнопки
+    langButtons.forEach(btn => {
+        if (btn.dataset.lang === currentLang) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    
+    // Установка начальных стилей для анимации
+    elementsWithData.forEach(element => {
+        element.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    });
+    
+    // Обработчики кликов по кнопкам языка
     langButtons.forEach(button => {
         button.addEventListener('click', () => {
             const lang = button.dataset.lang;
+            localStorage.setItem('language', lang);
+            document.documentElement.lang = lang;
             
-            // Update active button
             langButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
             
-            // Update content
             elementsWithData.forEach(element => {
-                if (element.tagName === 'INPUT' || element.tagName === 'OPTION') {
-                    element.placeholder = element.dataset[lang];
-                } else {
-                    element.textContent = element.dataset[lang];
+                const newText = element.dataset[lang];
+                if (newText) {
+                    animateTextChange(element, newText);
                 }
             });
+            
+            // Проверка на отсутствующие переводы
+            checkMissingTranslations();
         });
+    });
+    
+    // Начальная установка текстов
+    elementsWithData.forEach(element => {
+        const content = element.dataset[currentLang];
+        if (element.tagName === 'INPUT') {
+            element.placeholder = content;
+        } else {
+            element.textContent = content;
+        }
+    });
+}
+
+// Функция проверки отсутствующих переводов
+function checkMissingTranslations() {
+    const elementsWithData = document.querySelectorAll('[data-ru][data-en]');
+    const missingTranslations = [];
+    
+    elementsWithData.forEach(element => {
+        const ruText = element.dataset.ru;
+        const enText = element.dataset.en;
+        
+        if (!ruText || !enText || ruText === enText) {
+            const elementInfo = {
+                element: element,
+                ru: ruText,
+                en: enText
+            };
+            missingTranslations.push(elementInfo);
+        }
+    });
+    
+    if (missingTranslations.length > 0) {
+        console.warn('Обнаружены отсутствующие или некорректные переводы:', missingTranslations);
+    }
+}
+
+// Функция для проверки корректности отображения текста
+function checkTextRendering() {
+    const allTextElements = document.querySelectorAll('h1, h2, h3, p, span, a, button, label, input[type="text"], input[type="email"], input[type="tel"]');
+    
+    allTextElements.forEach(element => {
+        const computedStyle = window.getComputedStyle(element);
+        const fontSize = parseFloat(computedStyle.fontSize);
+        const lineHeight = parseFloat(computedStyle.lineHeight);
+        
+        // Проверка на слишком маленький текст
+        if (fontSize < 12) {
+            console.warn('Обнаружен слишком маленький текст:', element);
+        }
+        
+        // Проверка на оптимальную высоту строки
+        if (lineHeight / fontSize < 1.2 || lineHeight / fontSize > 2) {
+            console.warn('Неоптимальная высота строки:', element);
+        }
+        
+        // Проверка на обрезание текста
+        if (element.scrollWidth > element.clientWidth) {
+            console.warn('Текст обрезается:', element);
+        }
     });
 }
 
@@ -380,9 +519,17 @@ function initContactForm() {
             }
             
             if (isValid) {
-                // Отправка формы
-                console.log('Форма отправлена');
+                // Формируем сообщение для WhatsApp
+                const message = `Новая заявка с сайта!%0A%0AИмя: ${name.value}%0AEmail: ${email.value}%0AТелефон: ${phone.value}`;
+                
+                // Открываем WhatsApp с готовым сообщением
+                window.open(`https://wa.me/message/2OHKSR7E27KVH1?text=${message}`, '_blank');
+                
+                // Очищаем форму
                 contactForm.reset();
+                
+                // Показываем сообщение об успехе
+                alert('Спасибо! Ваша заявка отправлена.');
             }
         });
     }
@@ -419,174 +566,27 @@ function initSmoothScrolling() {
     });
 }
 
-// ROI Calculator functionality
+// ROI Calculator
 function initROICalculator() {
-    const calculator = {
-        elements: {
-            investmentInput: document.querySelector('input[name="investment"]'),
-            yieldInput: document.querySelector('input[name="yield"]'),
-            yieldValue: document.querySelector('.range-value span'),
-            calculateBtn: document.querySelector('.calculate-btn'),
-            resultsContainer: document.querySelector('.calculator-results'),
-            monthlyIncome: document.querySelector('.monthly-income'),
-            yearlyROI: document.querySelector('.yearly-roi'),
-            chart: document.getElementById('roiChart')
-        },
-        
-        formatNumber: (num, currency = 'THB') => {
-            return new Intl.NumberFormat('ru-RU', {
-                style: 'currency',
-                currency: currency,
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(num);
-        },
-        
-        calculateROI: () => {
-            const investment = parseFloat(calculator.elements.investmentInput.value) || 0;
-            const yield = parseFloat(calculator.elements.yieldInput.value) || 0;
-            
-            const monthlyIncome = investment * (yield / 100);
-            const yearlyROI = (monthlyIncome * 12 / investment) * 100;
-            
-            calculator.elements.monthlyIncome.textContent = calculator.formatNumber(monthlyIncome);
-            calculator.elements.yearlyROI.textContent = `${yearlyROI.toFixed(1)}%`;
-            
-            calculator.updateChart(investment, monthlyIncome);
-            calculator.elements.resultsContainer.style.display = 'block';
-        },
-        
-        updateChart: (investment, monthlyIncome) => {
-            const ctx = calculator.elements.chart.getContext('2d');
-            const data = {
-                labels: Array.from({length: 12}, (_, i) => `Месяц ${i + 1}`),
-                datasets: [{
-                    label: 'Доход',
-                    data: Array.from({length: 12}, (_, i) => monthlyIncome * (i + 1)),
-                    borderColor: '#4CAF50',
-                    tension: 0.1
-                }]
-            };
-            
-            if (window.roiChart) {
-                window.roiChart.destroy();
-            }
-            
-            window.roiChart = new Chart(ctx, {
-                type: 'line',
-                data: data,
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => calculator.formatNumber(context.raw)
-                            }
-                        }
-                    }
-                }
-            });
+    const calculatorForm = document.querySelector('.calculator-form');
+    const resultValue = document.querySelector('.result-value');
+
+    calculatorForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const investment = parseFloat(document.querySelector('input[name="investment"]').value);
+        const monthlyIncome = parseFloat(document.querySelector('input[name="monthly-income"]').value);
+        const monthlyExpenses = parseFloat(document.querySelector('input[name="monthly-expenses"]').value);
+
+        if (isNaN(investment) || isNaN(monthlyIncome) || isNaN(monthlyExpenses)) {
+            alert('Пожалуйста, введите корректные числовые значения');
+            return;
         }
-    };
-    
-    // Обработчики событий
-    calculator.elements.yieldInput.addEventListener('input', (e) => {
-        const value = parseFloat(e.target.value);
-        calculator.elements.yieldValue.textContent = calculator.formatNumber(value);
-    });
-    
-    calculator.elements.calculateBtn.addEventListener('click', () => {
-        calculator.calculateROI();
-    });
-    
-    // Инициализация при загрузке
-    calculator.elements.yieldValue.textContent = calculator.formatNumber(
-        parseFloat(calculator.elements.yieldInput.value)
-    );
-}
 
-function updateRecommendations(investment, yield) {
-    const recommendationsList = document.querySelector('.recommendations-list');
-    const comparisonSection = document.querySelector('.comparison-section');
-    if (!recommendationsList || !comparisonSection) return;
+        const annualIncome = (monthlyIncome - monthlyExpenses) * 12;
+        const roi = (annualIncome / investment) * 100;
 
-    // Обновляем рекомендации
-    const recommendations = [
-        {
-            text: 'Инвестируйте в недвижимость с высоким потенциалом роста',
-            condition: investment >= 5000000
-        },
-        {
-            text: 'Рассмотрите варианты с готовой арендной программой',
-            condition: yield >= 1.2
-        },
-        {
-            text: 'Обратите внимание на объекты в перспективных районах',
-            condition: investment >= 3000000
-        },
-        {
-            text: 'Используйте налоговые льготы для инвесторов',
-            condition: investment >= 10000000
-        }
-    ];
-
-    recommendationsList.innerHTML = recommendations
-        .filter(rec => rec.condition)
-        .map(rec => `<li>${rec.text}</li>`)
-        .join('');
-
-    // Обновляем сравнительную таблицу
-    const comparisonTable = `
-        <table class="investment-comparison-table">
-            <thead>
-                <tr>
-                    <th>Тип инвестиции</th>
-                    <th>Годовая доходность</th>
-                    <th>Риски</th>
-                    <th>Ликвидность</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="comparison-row">
-                    <td>Недвижимость Пхукета</td>
-                    <td>${(yield * 12).toFixed(1)}%</td>
-                    <td>Низкие</td>
-                    <td>Высокая</td>
-                </tr>
-                <tr class="comparison-row">
-                    <td>Банковский депозит</td>
-                    <td>3-4%</td>
-                    <td>Минимальные</td>
-                    <td>Высокая</td>
-                </tr>
-                <tr class="comparison-row">
-                    <td>Фондовый рынок</td>
-                    <td>7-10%</td>
-                    <td>Высокие</td>
-                    <td>Высокая</td>
-                </tr>
-                <tr class="comparison-row">
-                    <td>Криптовалюты</td>
-                    <td>20-30%</td>
-                    <td>Очень высокие</td>
-                    <td>Средняя</td>
-                </tr>
-            </tbody>
-        </table>
-    `;
-    
-    comparisonSection.innerHTML = `
-        <h4>Сравнение с другими инвестициями</h4>
-        ${comparisonTable}
-    `;
-
-    // Добавляем анимацию появления строк
-    const rows = document.querySelectorAll('.comparison-row');
-    rows.forEach((row, index) => {
-        row.style.animation = `slideIn 0.3s ease-out forwards ${index * 0.1}s`;
+        resultValue.textContent = roi.toFixed(2) + '%';
     });
 }
 
@@ -717,45 +717,33 @@ function initPriceGrowthChart() {
 
 // Countdown Timer functionality
 function initCountdownTimer() {
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 1); // Устанавливаем срок на завтра
-    
-    const updateCountdown = () => {
+    const countdownElement = document.getElementById('offerCountdown');
+    if (!countdownElement) return;
+
+    // Установка конечной даты (24 часа от текущего момента)
+    const endTime = new Date();
+    endTime.setHours(endTime.getHours() + 24);
+
+    function updateTimer() {
         const now = new Date();
-        const diff = endDate - now;
-        
+        const diff = endTime - now;
+
         if (diff <= 0) {
-            clearInterval(timerInterval);
-            elements.countdownElements.days.textContent = '00';
-            elements.countdownElements.hours.textContent = '00';
-            elements.countdownElements.minutes.textContent = '00';
-            elements.countdownElements.seconds.textContent = '00';
+            countdownElement.textContent = '00:00:00';
             return;
         }
-        
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        
-        // Анимация изменения значений
-        const animateValue = (element, value) => {
-            const current = parseInt(element.textContent);
-            if (current !== value) {
-                element.classList.add('animate-pulse');
-                element.textContent = value.toString().padStart(2, '0');
-                setTimeout(() => element.classList.remove('animate-pulse'), 500);
-            }
-        };
-        
-        animateValue(elements.countdownElements.days, days);
-        animateValue(elements.countdownElements.hours, hours);
-        animateValue(elements.countdownElements.minutes, minutes);
-        animateValue(elements.countdownElements.seconds, seconds);
-    };
-    
-    const timerInterval = setInterval(updateCountdown, 1000);
-    updateCountdown(); // Первоначальное обновление
+
+        countdownElement.textContent = 
+            `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // Обновление каждую секунду
+    updateTimer();
+    setInterval(updateTimer, 1000);
 }
 
 // FAQ Section functionality
@@ -1040,7 +1028,7 @@ const optimizedScroll = debounceFn(() => {
     }
 }, 10);
 
-window.addEventListener('scroll', optimizedScroll);
+window.addEventListener('scroll', optimizedScroll); 
 
 // Инициализация этапов
 function initStages() {
@@ -1234,4 +1222,61 @@ window.addEventListener('scroll', () => {
     }
     
     lastScrollTop = scrollTop;
-}, { passive: true }); 
+}, { passive: true });
+
+function initStickyHeader() {
+    const header = document.querySelector('.header');
+    const scrollThreshold = 100;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > scrollThreshold) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+}
+
+// Индикатор прокрутки
+function initScrollProgress() {
+    const progressBar = document.createElement('div');
+    progressBar.className = 'scroll-progress';
+    document.body.appendChild(progressBar);
+
+    function updateProgress() {
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight - windowHeight;
+        const scrolled = window.scrollY;
+        const progress = (scrolled / documentHeight) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+
+    window.addEventListener('scroll', updateProgress);
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
+}
+
+// Анимация иконок в секции "Почему выбирают нас"
+function initWhyUsAnimations() {
+    const icons = document.querySelectorAll('.why-us-icon');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate');
+                
+                // Удаляем анимацию при выходе из области видимости
+                setTimeout(() => {
+                    if (!entry.isIntersecting) {
+                        entry.target.classList.remove('animate');
+                    }
+                }, 1500);
+            }
+        });
+    }, {
+        threshold: 0.5,
+        rootMargin: '0px'
+    });
+    
+    icons.forEach(icon => observer.observe(icon));
+} 
