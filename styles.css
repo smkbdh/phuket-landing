@@ -2518,3 +2518,155 @@ canvas {
     left: 0;
     color: #4CAF50;
 }
+
+/* Property Descriptions */
+.property-description {
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+}
+
+/* ROI Calculator */
+.roi-calculator input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.calculator-results {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    display: none;
+}
+
+.recommendations-list {
+    margin-top: 20px;
+    padding-left: 20px;
+}
+
+.recommendations-list li {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Comparison Section */
+.comparison-section {
+    padding: 40px 0;
+    background-color: #f8f9fa;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.comparison-table th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+}
+
+/* FAQ Section */
+.faq-item {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.faq-question {
+    padding: 15px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+}
+
+.faq-answer {
+    padding: 15px;
+    display: none;
+    background-color: #fff;
+    color: #333;
+}
+
+.faq-item.active .faq-answer {
+    display: block;
+}
+
+/* Acquisition Steps */
+.acquisition-steps {
+    padding: 40px 0;
+    background-color: #fff;
+}
+
+.step-item {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.step-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.step-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.step-description {
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Partners Section */
+.partners-section {
+    padding: 40px 0;
+    background-color: #f8f9fa;
+}
+
+.partner-item {
+    text-align: center;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.partner-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 15px 0;
+}
+
+.partner-description {
+    color: #333;
+    font-size: 14px;
+    line-height: 1.6;
+}

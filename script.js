@@ -380,27 +380,10 @@ function updateCountdown() {
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        updateCountdownElement('days', days);
-        updateCountdownElement('hours', hours);
-        updateCountdownElement('minutes', minutes);
-        updateCountdownElement('seconds', seconds);
-    }
-
-    function updateCountdownElement(id, value) {
-        const element = document.getElementById(id);
-        if (!element) return;
-
-        const newValue = String(value).padStart(2, '0');
-        if (element.textContent !== newValue) {
-            element.style.transform = 'translateY(-10px)';
-            element.style.opacity = '0';
-            
-            setTimeout(() => {
-                element.textContent = newValue;
-                element.style.transform = 'translateY(0)';
-                element.style.opacity = '1';
-            }, 100);
-        }
+        document.getElementById('days').textContent = String(days).padStart(2, '0');
+        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
     }
 
     update();
