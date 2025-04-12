@@ -181,57 +181,187 @@ function initROICalculator() {
         resultYearly: calculator.querySelector('.yearly-roi'),
         calculateBtn: calculator.querySelector('.calculate-btn'),
         resultsDiv: calculator.querySelector('.calculator-results'),
-        currencyBtns: calculator.querySelectorAll('.currency-btn')
+        currencyBtns: calculator.querySelectorAll('.currency-btn'),
+        helperText: calculator.querySelector('.helper-text')
     };
 
-    // Убираем ограничение на количество цифр
-    elements.input.removeAttribute('maxlength');
-    
-    // Обновляем значение при вводе
+    const exchangeRates = {
+        THB: 1,
+        USD: 35.5,
+        EUR: 38.5
+    };
+
+    let currentCurrency = 'THB';
+    const minAmount = {
+        THB: 100000,
+        USD: Math.round(100000 / exchangeRates.USD),
+        EUR: Math.round(100000 / exchangeRates.EUR)
+    };
+
+    // Currency switching
+    elements.currencyBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const newCurrency = btn.dataset.currency;
+            if (newCurrency === currentCurrency) return;
+
+            elements.currencyBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Convert current value to new currency
+            const value = parseFloat(elements.input.value.replace(/[^0-9.]/g, '')) || 0;
+            const valueInTHB = currentCurrency === 'THB' ? value : value * exchangeRates[currentCurrency];
+            const newValue = currentCurrency === 'THB' ? 
+                valueInTHB / exchangeRates[newCurrency] : 
+                valueInTHB;
+
+            currentCurrency = newCurrency;
+            elements.input.value = formatNumber(Math.round(newValue), newCurrency);
+            elements.helperText.textContent = `Минимальная сумма: ${formatNumber(minAmount[currentCurrency], currentCurrency)} ${currentCurrency}`;
+        });
+    });
+
+    // Format number with currency
+    function formatNumber(num, currency) {
+        return new Intl.NumberFormat('ru-RU').format(num);
+    }
+
+    // Input validation and formatting
     elements.input.addEventListener('input', (e) => {
         let value = e.target.value.replace(/[^0-9]/g, '');
         if (value) {
-            value = parseInt(value).toLocaleString();
+            const numValue = parseInt(value);
+            if (numValue < minAmount[currentCurrency]) {
+                value = minAmount[currentCurrency];
+            }
+            e.target.value = formatNumber(value, currentCurrency);
         }
-        e.target.value = value;
     });
 
-    // Обновляем слайдер
+    // Yield slider with smooth updates
     elements.yieldInput.addEventListener('input', () => {
         const value = parseFloat(elements.yieldInput.value);
         elements.rangeValue.textContent = `${value.toFixed(1)}%`;
+        elements.rangeValue.style.left = `${(value - 0.5) * 100 / 1.5}%`;
     });
 
-    // Обработка кнопки расчета
+    // Calculate button handler
     elements.calculateBtn.addEventListener('click', () => {
-        const investment = parseFloat(elements.input.value.replace(/,/g, ''));
+        const investment = parseFloat(elements.input.value.replace(/[^0-9.]/g, ''));
         const yield = parseFloat(elements.yieldInput.value);
         
         if (!isNaN(investment) && !isNaN(yield)) {
-            const monthlyIncome = (investment * yield / 100).toLocaleString();
-            const yearlyROI = (yield * 12).toFixed(1);
+            elements.calculateBtn.classList.add('calculating');
             
-            elements.resultMonthly.textContent = `${monthlyIncome} THB`;
-            elements.resultYearly.textContent = `${yearlyROI}%`;
-            
-            // Показываем результаты
-            elements.resultsDiv.style.display = 'block';
-            
-            // Добавляем рекомендации
-            const recommendations = [
-                'Инвестируйте в недвижимость с высоким потенциалом роста',
-                'Рассмотрите варианты с готовой арендной программой',
-                'Обратите внимание на объекты в перспективных районах',
-                'Используйте налоговые льготы для инвесторов'
-            ];
-            
-            const recommendationsList = document.querySelector('.recommendations-list');
-            if (recommendationsList) {
-                recommendationsList.innerHTML = recommendations
-                    .map(rec => `<li>${rec}</li>`)
-                    .join('');
-            }
+            setTimeout(() => {
+                // Convert to THB for calculations if needed
+                const investmentTHB = currentCurrency === 'THB' ? 
+                    investment : investment * exchangeRates[currentCurrency];
+
+                const monthlyIncome = (investmentTHB * yield / 100);
+                const yearlyROI = (yield * 12).toFixed(1);
+                
+                elements.resultMonthly.textContent = `${formatNumber(Math.round(monthlyIncome), 'THB')} THB`;
+                elements.resultYearly.textContent = `${yearlyROI}%`;
+                
+                elements.resultsDiv.style.display = 'block';
+                elements.resultsDiv.classList.add('visible');
+                
+                updateRecommendations(investmentTHB, yield);
+                elements.calculateBtn.classList.remove('calculating');
+                
+                // Анимация появления результатов
+                const resultItems = document.querySelectorAll('.result-item');
+                resultItems.forEach((item, index) => {
+                    item.style.animation = `fadeInUp 0.3s ease-out forwards ${index * 0.1}s`;
+                });
+            }, 500);
         }
+    });
+
+    // Initialize with default values
+    elements.input.value = formatNumber(minAmount[currentCurrency], currentCurrency);
+    elements.helperText.textContent = `Минимальная сумма: ${formatNumber(minAmount[currentCurrency], currentCurrency)} ${currentCurrency}`;
+}
+
+function updateRecommendations(investment, yield) {
+    const recommendationsList = document.querySelector('.recommendations-list');
+    const comparisonSection = document.querySelector('.comparison-section');
+    if (!recommendationsList || !comparisonSection) return;
+
+    // Обновляем рекомендации
+    const recommendations = [
+        {
+            text: 'Инвестируйте в недвижимость с высоким потенциалом роста',
+            condition: investment >= 5000000
+        },
+        {
+            text: 'Рассмотрите варианты с готовой арендной программой',
+            condition: yield >= 1.2
+        },
+        {
+            text: 'Обратите внимание на объекты в перспективных районах',
+            condition: investment >= 3000000
+        },
+        {
+            text: 'Используйте налоговые льготы для инвесторов',
+            condition: investment >= 10000000
+        }
+    ];
+
+    recommendationsList.innerHTML = recommendations
+        .filter(rec => rec.condition)
+        .map(rec => `<li>${rec.text}</li>`)
+        .join('');
+
+    // Обновляем сравнительную таблицу
+    const comparisonTable = `
+        <table class="investment-comparison-table">
+            <thead>
+                <tr>
+                    <th>Тип инвестиции</th>
+                    <th>Годовая доходность</th>
+                    <th>Риски</th>
+                    <th>Ликвидность</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="comparison-row">
+                    <td>Недвижимость Пхукета</td>
+                    <td>${(yield * 12).toFixed(1)}%</td>
+                    <td>Низкие</td>
+                    <td>Высокая</td>
+                </tr>
+                <tr class="comparison-row">
+                    <td>Банковский депозит</td>
+                    <td>3-4%</td>
+                    <td>Минимальные</td>
+                    <td>Высокая</td>
+                </tr>
+                <tr class="comparison-row">
+                    <td>Фондовый рынок</td>
+                    <td>7-10%</td>
+                    <td>Высокие</td>
+                    <td>Высокая</td>
+                </tr>
+                <tr class="comparison-row">
+                    <td>Криптовалюты</td>
+                    <td>20-30%</td>
+                    <td>Очень высокие</td>
+                    <td>Средняя</td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+    
+    comparisonSection.innerHTML = `
+        <h4>Сравнение с другими инвестициями</h4>
+        ${comparisonTable}
+    `;
+
+    // Добавляем анимацию появления строк
+    const rows = document.querySelectorAll('.comparison-row');
+    rows.forEach((row, index) => {
+        row.style.animation = `slideIn 0.3s ease-out forwards ${index * 0.1}s`;
     });
 }
 
@@ -360,55 +490,143 @@ function initPriceGrowthChart() {
     updateFontSize();
 }
 
-// Countdown Timer with smooth animation
-function updateCountdown() {
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 14); // 14 days from now
-    endDate.setHours(23, 59, 59);
+// Countdown Timer functionality
+function initCountdownTimer() {
+    const countdownElements = {
+        days: document.getElementById('days'),
+        hours: document.getElementById('hours'),
+        minutes: document.getElementById('minutes'),
+        seconds: document.getElementById('seconds')
+    };
 
-    function update() {
-        const now = new Date();
-        const diff = endDate - now;
+    if (!Object.values(countdownElements).every(el => el)) {
+        console.error('Не найдены все элементы таймера');
+        return;
+    }
 
-        if (diff <= 0) {
-            clearInterval(timer);
+    // Устанавливаем дату окончания (31 мая 2024)
+    const endDate = new Date('2024-05-31T23:59:59').getTime();
+    let previousValues = {
+        days: -1,
+        hours: -1,
+        minutes: -1,
+        seconds: -1
+    };
+
+    function animateValue(element, value) {
+        element.classList.remove('animate-flip');
+        element.classList.remove('animate-pulse');
+        
+        // Принудительный reflow для сброса анимации
+        void element.offsetWidth;
+        
+        element.textContent = value.toString().padStart(2, '0');
+        element.classList.add('animate-flip');
+        
+        if (value === 0) {
+            element.classList.add('animate-pulse');
+        }
+    }
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = endDate - now;
+
+        if (distance < 0) {
+            Object.values(countdownElements).forEach(el => {
+                el.textContent = '00';
+                el.classList.add('expired');
+            });
             return;
         }
 
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        document.getElementById('days').textContent = String(days).padStart(2, '0');
-        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        // Обновляем только изменившиеся значения с анимацией
+        if (days !== previousValues.days) {
+            animateValue(countdownElements.days, days);
+            previousValues.days = days;
+        }
+        if (hours !== previousValues.hours) {
+            animateValue(countdownElements.hours, hours);
+            previousValues.hours = hours;
+        }
+        if (minutes !== previousValues.minutes) {
+            animateValue(countdownElements.minutes, minutes);
+            previousValues.minutes = minutes;
+        }
+        if (seconds !== previousValues.seconds) {
+            animateValue(countdownElements.seconds, seconds);
+            previousValues.seconds = seconds;
+        }
+
+        // Добавляем эффект ожидания для следующей секунды
+        const progress = 1 - (distance % 1000) / 1000;
+        document.documentElement.style.setProperty('--countdown-progress', progress);
     }
 
-    update();
-    const timer = setInterval(update, 1000);
+    // Запускаем таймер с интервалом в 100мс для более плавной анимации
+    updateCountdown();
+    setInterval(updateCountdown, 100);
 }
 
-// FAQ Functionality
+// FAQ Section functionality
 function initFAQ() {
     const faqItems = document.querySelectorAll('.faq-item');
     
     faqItems.forEach(item => {
         const question = item.querySelector('.faq-question');
         const answer = item.querySelector('.faq-answer');
+        const icon = item.querySelector('.faq-question i');
+        
+        if (!answer || !icon) return;
+        
+        // Устанавливаем начальную высоту для плавной анимации
+        answer.style.height = '0px';
+        answer.style.overflow = 'hidden';
+        answer.style.transition = 'height 0.3s ease-in-out, opacity 0.3s ease-in-out';
+        answer.style.opacity = '0';
+        
+        // Добавляем анимацию для иконки
+        icon.style.transition = 'transform 0.3s ease-in-out';
         
         question.addEventListener('click', () => {
-            const isActive = item.classList.contains('active');
+            const isOpen = item.classList.contains('active');
             
-            // Закрываем все элементы
+            // Закрываем все другие элементы
             faqItems.forEach(otherItem => {
-                otherItem.classList.remove('active');
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    const otherAnswer = otherItem.querySelector('.faq-answer');
+                    const otherIcon = otherItem.querySelector('.faq-question i');
+                    
+                    otherItem.classList.remove('active');
+                    otherAnswer.style.height = '0px';
+                    otherAnswer.style.opacity = '0';
+                    otherIcon.style.transform = 'rotate(0deg)';
+                }
             });
             
-            // Открываем текущий элемент
-            if (!isActive) {
+            // Переключаем текущий элемент
+            if (!isOpen) {
                 item.classList.add('active');
+                answer.style.height = answer.scrollHeight + 'px';
+                answer.style.opacity = '1';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                item.classList.remove('active');
+                answer.style.height = '0px';
+                answer.style.opacity = '0';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        });
+        
+        // Обработка изменения размера окна
+        window.addEventListener('resize', () => {
+            if (item.classList.contains('active')) {
+                answer.style.height = answer.scrollHeight + 'px';
             }
         });
     });
@@ -729,26 +947,72 @@ const optimizedScroll = debounceFn(() => {
 
 window.addEventListener('scroll', optimizedScroll);
 
-// Исправление этапов
+// Инициализация этапов
 function initStages() {
     const stageItems = document.querySelectorAll('.stage-item');
-    
-    stageItems.forEach(item => {
+    let activeStage = null;
+
+    stageItems.forEach((item, index) => {
         const header = item.querySelector('.stage-header');
         const content = item.querySelector('.stage-content');
-        
+        const number = item.querySelector('.stage-number');
+        const toggleBtn = item.querySelector('.toggle-btn');
+
+        // Установка начальной высоты контента
+        content.style.maxHeight = '0px';
+
+        // Обработчик наведения на номер этапа
+        number.addEventListener('mouseenter', () => {
+            number.classList.add('hover');
+        });
+
+        number.addEventListener('mouseleave', () => {
+            number.classList.remove('hover');
+        });
+
+        // Обработчик клика по заголовку
         header.addEventListener('click', () => {
             const isActive = item.classList.contains('active');
-            
-            // Закрываем все элементы
-            stageItems.forEach(otherItem => {
-                otherItem.classList.remove('active');
-            });
-            
-            // Открываем текущий элемент
+
+            // Закрыть активный этап, если он существует
+            if (activeStage && activeStage !== item) {
+                const activeContent = activeStage.querySelector('.stage-content');
+                activeContent.style.maxHeight = '0px';
+                activeStage.classList.remove('active');
+                activeStage.querySelector('.stage-number').classList.remove('active');
+            }
+
+            // Переключить текущий этап
             if (!isActive) {
+                content.style.maxHeight = content.scrollHeight + 'px';
                 item.classList.add('active');
+                number.classList.add('active');
+                activeStage = item;
+
+                // Анимация прогресса для предыдущих этапов
+                stageItems.forEach((prevItem, prevIndex) => {
+                    if (prevIndex < index) {
+                        prevItem.classList.add('completed');
+                    }
+                });
+            } else {
+                content.style.maxHeight = '0px';
+                item.classList.remove('active');
+                number.classList.remove('active');
+                activeStage = null;
             }
         });
     });
+
+    // Открыть первый этап по умолчанию
+    if (stageItems.length > 0) {
+        const firstItem = stageItems[0];
+        const firstContent = firstItem.querySelector('.stage-content');
+        const firstNumber = firstItem.querySelector('.stage-number');
+        
+        firstContent.style.maxHeight = firstContent.scrollHeight + 'px';
+        firstItem.classList.add('active');
+        firstNumber.classList.add('active');
+        activeStage = firstItem;
+    }
 } 
