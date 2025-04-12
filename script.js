@@ -1,3 +1,74 @@
+// Определение данных для объектов недвижимости
+const properties = [
+    {
+        image: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf",
+        title: {
+            ru: "Вилла с видом на море",
+            en: "Sea View Villa"
+        },
+        description: {
+            ru: "Роскошная вилла с 4 спальнями, бассейном и панорамным видом на море",
+            en: "Luxury villa with 4 bedrooms, pool and panoramic sea view"
+        },
+        price: {
+            ru: "от 25,000,000 THB",
+            en: "from 25,000,000 THB"
+        }
+    },
+    {
+        image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6",
+        title: {
+            ru: "Апартаменты в кондоминиуме",
+            en: "Condominium Apartment"
+        },
+        description: {
+            ru: "Современные апартаменты с 2 спальнями в престижном районе",
+            en: "Modern 2-bedroom apartment in prestigious area"
+        },
+        price: {
+            ru: "от 8,000,000 THB",
+            en: "from 8,000,000 THB"
+        }
+    }
+];
+
+// Определение данных для отзывов
+const testimonials = [
+    {
+        rating: 5,
+        text: {
+            ru: "Отличный сервис! Помогли найти идеальную виллу для нашей семьи. Очень профессиональный подход.",
+            en: "Great service! Helped us find the perfect villa for our family. Very professional approach."
+        },
+        name: {
+            ru: "Александр П.",
+            en: "Alexander P."
+        }
+    },
+    {
+        rating: 5,
+        text: {
+            ru: "Быстро нашли подходящий вариант в нашем бюджете. Все документы оформили грамотно и быстро.",
+            en: "Quickly found a suitable option within our budget. All documents were processed competently and quickly."
+        },
+        name: {
+            ru: "Елена С.",
+            en: "Elena S."
+        }
+    },
+    {
+        rating: 5,
+        text: {
+            ru: "Превосходное знание рынка недвижимости Пхукета. Очень довольны приобретенной виллой.",
+            en: "Excellent knowledge of Phuket real estate market. Very satisfied with the purchased villa."
+        },
+        name: {
+            ru: "Михаил К.",
+            en: "Michael K."
+        }
+    }
+];
+
 // Проверка загрузки файлов
 console.log('Script.js loaded');
 
@@ -704,96 +775,6 @@ function initActiveNavigation() {
     window.addEventListener('load', setActiveLink);
 }
 
-// Property data
-const properties = [
-    {
-        title: {
-            ru: 'Роскошная вилла с бассейном',
-            en: 'Luxury villa with pool'
-        },
-        description: {
-            ru: 'Современная вилла с 4 спальнями, частным бассейном и видом на море',
-            en: 'Modern villa with 4 bedrooms, private pool and sea view'
-        },
-        price: {
-            ru: 'от 87,500,000 ฿',
-            en: 'from ฿87,500,000'
-        },
-        image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
-    },
-    {
-        title: {
-            ru: 'Современная квартира в центре',
-            en: 'Modern apartment in the center'
-        },
-        description: {
-            ru: 'Стильная квартира с 2 спальнями, полностью оборудованная кухня',
-            en: 'Stylish apartment with 2 bedrooms, fully equipped kitchen'
-        },
-        price: {
-            ru: 'от 15,750,000 ฿',
-            en: 'from ฿15,750,000'
-        },
-        image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
-    },
-    {
-        title: {
-            ru: 'Вилла на берегу моря',
-            en: 'Beachfront Villa'
-        },
-        description: {
-            ru: 'Роскошная 5-спальная вилла с прямым выходом к пляжу',
-            en: 'Luxurious 5-bedroom villa with direct beach access'
-        },
-        price: {
-            ru: 'от 112,000,000 ฿',
-            en: 'from ฿112,000,000'
-        },
-        image: 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
-    },
-    {
-        title: {
-            ru: 'Люкс пентхаус',
-            en: 'Luxury Penthouse'
-        },
-        description: {
-            ru: '3-спальный пентхаус с панорамной террасой',
-            en: '3-bedroom penthouse with panoramic terrace'
-        },
-        price: {
-            ru: 'от 63,000,000 ฿',
-            en: 'from ฿63,000,000'
-        },
-        image: 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1080&q=80'
-    }
-];
-
-// Testimonials data
-const testimonials = [
-    {
-        name: {
-            ru: 'Анна Петрова',
-            en: 'Anna Petrova'
-        },
-        text: {
-            ru: 'Отличный сервис! Помогли найти идеальную виллу для нашей семьи.',
-            en: 'Great service! Helped us find the perfect villa for our family.'
-        },
-        rating: 5
-    },
-    {
-        name: {
-            ru: 'Михаил Иванов',
-            en: 'Mikhail Ivanov'
-        },
-        text: {
-            ru: 'Профессиональный подход и внимательное отношение к клиентам.',
-            en: 'Professional approach and attentive attitude to clients.'
-        },
-        rating: 5
-    }
-];
-
 function openCalculator() {
     const calculatorSection = document.getElementById('roi-calculator');
     if (calculatorSection) {
@@ -1015,4 +996,79 @@ function initStages() {
         firstNumber.classList.add('active');
         activeStage = firstItem;
     }
-} 
+}
+
+// Функция для обновления контента при смене языка
+function updateContent(lang) {
+    // Обновляем тексты объектов недвижимости
+    const propertyGrid = document.querySelector('.property-grid');
+    if (propertyGrid) {
+        const propertyItems = propertyGrid.querySelectorAll('.property-item');
+        propertyItems.forEach((item, index) => {
+            const property = properties[index];
+            if (property) {
+                const title = item.querySelector('h3');
+                const description = item.querySelector('p');
+                const price = item.querySelector('.price');
+                
+                if (title) title.textContent = property.title[lang];
+                if (description) description.textContent = property.description[lang];
+                if (price) price.textContent = property.price[lang];
+            }
+        });
+    }
+
+    // Обновляем отзывы
+    const testimonialsContainer = document.querySelector('.testimonials-container');
+    if (testimonialsContainer) {
+        const testimonialItems = testimonialsContainer.querySelectorAll('.testimonial-item');
+        testimonialItems.forEach((item, index) => {
+            const testimonial = testimonials[index];
+            if (testimonial) {
+                const text = item.querySelector('.testimonial-text');
+                const name = item.querySelector('.testimonial-name');
+                
+                if (text) text.textContent = testimonial.text[lang];
+                if (name) name.textContent = testimonial.name[lang];
+            }
+        });
+    }
+}
+
+// Функция для инициализации сетки объектов
+function initPropertyGrid() {
+    const propertyGrid = document.querySelector('.property-grid');
+    if (!propertyGrid) return;
+
+    propertyGrid.innerHTML = properties.map(property => `
+        <div class="property-item">
+            <img src="${property.image}" alt="${property.title[currentLang]}">
+            <h3>${property.title[currentLang]}</h3>
+            <p>${property.description[currentLang]}</p>
+            <div class="price">${property.price[currentLang]}</div>
+        </div>
+    `).join('');
+}
+
+// Функция для инициализации отзывов
+function initTestimonials() {
+    const testimonialsContainer = document.querySelector('.testimonials-container');
+    if (!testimonialsContainer) return;
+
+    testimonialsContainer.innerHTML = testimonials.map(testimonial => `
+        <div class="testimonial-item">
+            <div class="rating">
+                ${'★'.repeat(testimonial.rating)}${'☆'.repeat(5 - testimonial.rating)}
+            </div>
+            <p class="testimonial-text">${testimonial.text[currentLang]}</p>
+            <div class="testimonial-name">${testimonial.name[currentLang]}</div>
+        </div>
+    `).join('');
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    initPropertyGrid();
+    initTestimonials();
+    updateContent(currentLang);
+}); 
