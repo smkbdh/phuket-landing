@@ -72,6 +72,136 @@ const testimonials = [
 // Проверка загрузки файлов
 console.log('Script.js loaded');
 
+// Кэширование DOM элементов
+const elements = {
+    header: document.querySelector('header'),
+    backToTop: document.getElementById('back-to-top'),
+    contactForm: document.getElementById('contact-form'),
+    propertyGrid: document.querySelector('.property-grid'),
+    testimonialsContainer: document.querySelector('.testimonials-container'),
+    faqItems: document.querySelectorAll('.faq-item'),
+    languageSwitcher: document.getElementById('language-switcher'),
+    countdownElements: {
+        days: document.getElementById('countdown-days'),
+        hours: document.getElementById('countdown-hours'),
+        minutes: document.getElementById('countdown-minutes'),
+        seconds: document.getElementById('countdown-seconds')
+    }
+};
+
+// Оптимизация обработчиков событий
+const eventHandlers = {
+    scroll: {
+        lastScrollTop: 0,
+        handleScroll: () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Показываем/скрываем кнопку "Наверх"
+            if (scrollTop > 300) {
+                elements.backToTop.style.display = 'block';
+            } else {
+                elements.backToTop.style.display = 'none';
+            }
+            
+            // Оптимизация отображения хедера
+            if (scrollTop > elements.lastScrollTop && scrollTop > 100) {
+                elements.header.style.transform = 'translateY(-100%)';
+            } else {
+                elements.header.style.transform = 'translateY(0)';
+            }
+            
+            elements.lastScrollTop = scrollTop;
+        }
+    },
+    
+    form: {
+        validateForm: (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const name = form.querySelector('input[name="name"]').value;
+            const email = form.querySelector('input[name="email"]').value;
+            const phone = form.querySelector('input[name="phone"]').value;
+            
+            if (!name || !email || !phone) {
+                showError('Пожалуйста, заполните все поля');
+                return;
+            }
+            
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError('Пожалуйста, введите корректный email');
+                return;
+            }
+            
+            if (!/^\+?[\d\s-]{10,}$/.test(phone)) {
+                showError('Пожалуйста, введите корректный номер телефона');
+                return;
+            }
+            
+            // Отправка формы
+            form.submit();
+        }
+    }
+};
+
+// Инициализация ленивой загрузки изображений
+const initLazyLoading = () => {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                observer.unobserve(img);
+            }
+        });
+    });
+    
+    document.querySelectorAll('img.lazy').forEach(img => imageObserver.observe(img));
+};
+
+// Инициализация анимаций при скролле
+const initScrollAnimations = () => {
+    const sections = document.querySelectorAll('section');
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    sections.forEach(section => sectionObserver.observe(section));
+};
+
+// Инициализация всех компонентов
+const initComponents = () => {
+    initLazyLoading();
+    initScrollAnimations();
+    
+    // Добавляем обработчики событий
+    window.addEventListener('scroll', eventHandlers.scroll.handleScroll);
+    elements.contactForm.addEventListener('submit', eventHandlers.form.validateForm);
+    elements.backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Инициализация FAQ
+    elements.faqItems.forEach(item => {
+        item.addEventListener('click', () => {
+            item.classList.toggle('active');
+        });
+    });
+    
+    // Инициализация переключателя языка
+    elements.languageSwitcher.addEventListener('change', (e) => {
+        const lang = e.target.value;
+        updateContent(lang);
+    });
+};
+
+// Запуск инициализации после загрузки DOM
+document.addEventListener('DOMContentLoaded', initComponents);
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded');
     
@@ -143,6 +273,21 @@ document.addEventListener('DOMContentLoaded', () => {
             testimonialsSlider.appendChild(testimonialCard);
         });
     }
+
+    // Ленивая загрузка изображений
+    const images = document.querySelectorAll('img[data-src]');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+                observer.unobserve(img);
+            }
+        });
+    });
+
+    images.forEach(img => imageObserver.observe(img));
 });
 
 // Stages accordion functionality
@@ -212,16 +357,51 @@ function initContactForm() {
     if (contactForm) {
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const formData = new FormData(contactForm);
-            const data = Object.fromEntries(formData.entries());
             
-            // Redirect to WhatsApp
-            const message = `Новая заявка:\nИмя: ${data.name}`;
-            window.open(`https://wa.me/message/2OHKSR7E27KVH1?text=${encodeURIComponent(message)}`, '_blank');
+            const name = contactForm.querySelector('input[name="name"]');
+            const email = contactForm.querySelector('input[name="email"]');
+            const phone = contactForm.querySelector('input[name="phone"]');
             
-            contactForm.reset();
+            let isValid = true;
+            
+            if (!name.value.trim()) {
+                showError(name, 'Пожалуйста, введите ваше имя');
+                isValid = false;
+            }
+            
+            if (!email.value.trim() || !email.value.includes('@')) {
+                showError(email, 'Пожалуйста, введите корректный email');
+                isValid = false;
+            }
+            
+            if (!phone.value.trim() || !/^\+?[\d\s-()]+$/.test(phone.value)) {
+                showError(phone, 'Пожалуйста, введите корректный номер телефона');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Отправка формы
+                console.log('Форма отправлена');
+                contactForm.reset();
+            }
         });
     }
+}
+
+function showError(input, message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    
+    const parent = input.parentElement;
+    parent.appendChild(errorDiv);
+    
+    input.classList.add('error');
+    
+    setTimeout(() => {
+        errorDiv.remove();
+        input.classList.remove('error');
+    }, 3000);
 }
 
 // Smooth scrolling
@@ -241,117 +421,91 @@ function initSmoothScrolling() {
 
 // ROI Calculator functionality
 function initROICalculator() {
-    const calculator = document.querySelector('.roi-calculator');
-    if (!calculator) return;
-
-    const elements = {
-        input: calculator.querySelector('input[name="investment"]'),
-        yieldInput: calculator.querySelector('input[name="yield"]'),
-        rangeValue: calculator.querySelector('.range-value span'),
-        resultMonthly: calculator.querySelector('.monthly-income'),
-        resultYearly: calculator.querySelector('.yearly-roi'),
-        calculateBtn: calculator.querySelector('.calculate-btn'),
-        resultsDiv: calculator.querySelector('.calculator-results'),
-        currencyBtns: calculator.querySelectorAll('.currency-btn'),
-        helperText: calculator.querySelector('.helper-text')
-    };
-
-    const exchangeRates = {
-        THB: 1,
-        USD: 35.5,
-        EUR: 38.5
-    };
-
-    let currentCurrency = 'THB';
-    const minAmount = {
-        THB: 100000,
-        USD: Math.round(100000 / exchangeRates.USD),
-        EUR: Math.round(100000 / exchangeRates.EUR)
-    };
-
-    // Currency switching
-    elements.currencyBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const newCurrency = btn.dataset.currency;
-            if (newCurrency === currentCurrency) return;
-
-            elements.currencyBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            // Convert current value to new currency
-            const value = parseFloat(elements.input.value.replace(/[^0-9.]/g, '')) || 0;
-            const valueInTHB = currentCurrency === 'THB' ? value : value * exchangeRates[currentCurrency];
-            const newValue = currentCurrency === 'THB' ? 
-                valueInTHB / exchangeRates[newCurrency] : 
-                valueInTHB;
-
-            currentCurrency = newCurrency;
-            elements.input.value = formatNumber(Math.round(newValue), newCurrency);
-            elements.helperText.textContent = `Минимальная сумма: ${formatNumber(minAmount[currentCurrency], currentCurrency)} ${currentCurrency}`;
-        });
-    });
-
-    // Format number with currency
-    function formatNumber(num, currency) {
-        return new Intl.NumberFormat('ru-RU').format(num);
-    }
-
-    // Input validation and formatting
-    elements.input.addEventListener('input', (e) => {
-        let value = e.target.value.replace(/[^0-9]/g, '');
-        if (value) {
-            const numValue = parseInt(value);
-            if (numValue < minAmount[currentCurrency]) {
-                value = minAmount[currentCurrency];
-            }
-            e.target.value = formatNumber(value, currentCurrency);
-        }
-    });
-
-    // Yield slider with smooth updates
-    elements.yieldInput.addEventListener('input', () => {
-        const value = parseFloat(elements.yieldInput.value);
-        elements.rangeValue.textContent = `${value.toFixed(1)}%`;
-        elements.rangeValue.style.left = `${(value - 0.5) * 100 / 1.5}%`;
-    });
-
-    // Calculate button handler
-    elements.calculateBtn.addEventListener('click', () => {
-        const investment = parseFloat(elements.input.value.replace(/[^0-9.]/g, ''));
-        const yield = parseFloat(elements.yieldInput.value);
+    const calculator = {
+        elements: {
+            investmentInput: document.querySelector('input[name="investment"]'),
+            yieldInput: document.querySelector('input[name="yield"]'),
+            yieldValue: document.querySelector('.range-value span'),
+            calculateBtn: document.querySelector('.calculate-btn'),
+            resultsContainer: document.querySelector('.calculator-results'),
+            monthlyIncome: document.querySelector('.monthly-income'),
+            yearlyROI: document.querySelector('.yearly-roi'),
+            chart: document.getElementById('roiChart')
+        },
         
-        if (!isNaN(investment) && !isNaN(yield)) {
-            elements.calculateBtn.classList.add('calculating');
+        formatNumber: (num, currency = 'THB') => {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: currency,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(num);
+        },
+        
+        calculateROI: () => {
+            const investment = parseFloat(calculator.elements.investmentInput.value) || 0;
+            const yield = parseFloat(calculator.elements.yieldInput.value) || 0;
             
-            setTimeout(() => {
-                // Convert to THB for calculations if needed
-                const investmentTHB = currentCurrency === 'THB' ? 
-                    investment : investment * exchangeRates[currentCurrency];
-
-                const monthlyIncome = (investmentTHB * yield / 100);
-                const yearlyROI = (yield * 12).toFixed(1);
-                
-                elements.resultMonthly.textContent = `${formatNumber(Math.round(monthlyIncome), 'THB')} THB`;
-                elements.resultYearly.textContent = `${yearlyROI}%`;
-                
-                elements.resultsDiv.style.display = 'block';
-                elements.resultsDiv.classList.add('visible');
-                
-                updateRecommendations(investmentTHB, yield);
-                elements.calculateBtn.classList.remove('calculating');
-                
-                // Анимация появления результатов
-                const resultItems = document.querySelectorAll('.result-item');
-                resultItems.forEach((item, index) => {
-                    item.style.animation = `fadeInUp 0.3s ease-out forwards ${index * 0.1}s`;
-                });
-            }, 500);
+            const monthlyIncome = investment * (yield / 100);
+            const yearlyROI = (monthlyIncome * 12 / investment) * 100;
+            
+            calculator.elements.monthlyIncome.textContent = calculator.formatNumber(monthlyIncome);
+            calculator.elements.yearlyROI.textContent = `${yearlyROI.toFixed(1)}%`;
+            
+            calculator.updateChart(investment, monthlyIncome);
+            calculator.elements.resultsContainer.style.display = 'block';
+        },
+        
+        updateChart: (investment, monthlyIncome) => {
+            const ctx = calculator.elements.chart.getContext('2d');
+            const data = {
+                labels: Array.from({length: 12}, (_, i) => `Месяц ${i + 1}`),
+                datasets: [{
+                    label: 'Доход',
+                    data: Array.from({length: 12}, (_, i) => monthlyIncome * (i + 1)),
+                    borderColor: '#4CAF50',
+                    tension: 0.1
+                }]
+            };
+            
+            if (window.roiChart) {
+                window.roiChart.destroy();
+            }
+            
+            window.roiChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => calculator.formatNumber(context.raw)
+                            }
+                        }
+                    }
+                }
+            });
         }
+    };
+    
+    // Обработчики событий
+    calculator.elements.yieldInput.addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value);
+        calculator.elements.yieldValue.textContent = calculator.formatNumber(value);
     });
-
-    // Initialize with default values
-    elements.input.value = formatNumber(minAmount[currentCurrency], currentCurrency);
-    elements.helperText.textContent = `Минимальная сумма: ${formatNumber(minAmount[currentCurrency], currentCurrency)} ${currentCurrency}`;
+    
+    calculator.elements.calculateBtn.addEventListener('click', () => {
+        calculator.calculateROI();
+    });
+    
+    // Инициализация при загрузке
+    calculator.elements.yieldValue.textContent = calculator.formatNumber(
+        parseFloat(calculator.elements.yieldInput.value)
+    );
 }
 
 function updateRecommendations(investment, yield) {
@@ -563,85 +717,45 @@ function initPriceGrowthChart() {
 
 // Countdown Timer functionality
 function initCountdownTimer() {
-    const countdownElements = {
-        days: document.getElementById('days'),
-        hours: document.getElementById('hours'),
-        minutes: document.getElementById('minutes'),
-        seconds: document.getElementById('seconds')
-    };
-
-    if (!Object.values(countdownElements).every(el => el)) {
-        console.error('Не найдены все элементы таймера');
-        return;
-    }
-
-    // Устанавливаем дату окончания (31 мая 2024)
-    const endDate = new Date('2024-05-31T23:59:59').getTime();
-    let previousValues = {
-        days: -1,
-        hours: -1,
-        minutes: -1,
-        seconds: -1
-    };
-
-    function animateValue(element, value) {
-        element.classList.remove('animate-flip');
-        element.classList.remove('animate-pulse');
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 1); // Устанавливаем срок на завтра
+    
+    const updateCountdown = () => {
+        const now = new Date();
+        const diff = endDate - now;
         
-        // Принудительный reflow для сброса анимации
-        void element.offsetWidth;
-        
-        element.textContent = value.toString().padStart(2, '0');
-        element.classList.add('animate-flip');
-        
-        if (value === 0) {
-            element.classList.add('animate-pulse');
-        }
-    }
-
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const distance = endDate - now;
-
-        if (distance < 0) {
-            Object.values(countdownElements).forEach(el => {
-                el.textContent = '00';
-                el.classList.add('expired');
-            });
+        if (diff <= 0) {
+            clearInterval(timerInterval);
+            elements.countdownElements.days.textContent = '00';
+            elements.countdownElements.hours.textContent = '00';
+            elements.countdownElements.minutes.textContent = '00';
+            elements.countdownElements.seconds.textContent = '00';
             return;
         }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        // Обновляем только изменившиеся значения с анимацией
-        if (days !== previousValues.days) {
-            animateValue(countdownElements.days, days);
-            previousValues.days = days;
-        }
-        if (hours !== previousValues.hours) {
-            animateValue(countdownElements.hours, hours);
-            previousValues.hours = hours;
-        }
-        if (minutes !== previousValues.minutes) {
-            animateValue(countdownElements.minutes, minutes);
-            previousValues.minutes = minutes;
-        }
-        if (seconds !== previousValues.seconds) {
-            animateValue(countdownElements.seconds, seconds);
-            previousValues.seconds = seconds;
-        }
-
-        // Добавляем эффект ожидания для следующей секунды
-        const progress = 1 - (distance % 1000) / 1000;
-        document.documentElement.style.setProperty('--countdown-progress', progress);
-    }
-
-    // Запускаем таймер с интервалом в 100мс для более плавной анимации
-    updateCountdown();
-    setInterval(updateCountdown, 100);
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        // Анимация изменения значений
+        const animateValue = (element, value) => {
+            const current = parseInt(element.textContent);
+            if (current !== value) {
+                element.classList.add('animate-pulse');
+                element.textContent = value.toString().padStart(2, '0');
+                setTimeout(() => element.classList.remove('animate-pulse'), 500);
+            }
+        };
+        
+        animateValue(elements.countdownElements.days, days);
+        animateValue(elements.countdownElements.hours, hours);
+        animateValue(elements.countdownElements.minutes, minutes);
+        animateValue(elements.countdownElements.seconds, seconds);
+    };
+    
+    const timerInterval = setInterval(updateCountdown, 1000);
+    updateCountdown(); // Первоначальное обновление
 }
 
 // FAQ Section functionality
@@ -1071,4 +1185,53 @@ document.addEventListener('DOMContentLoaded', () => {
     initPropertyGrid();
     initTestimonials();
     updateContent(currentLang);
-}); 
+});
+
+// Кнопка "Наверх"
+const backToTop = document.createElement('div');
+backToTop.className = 'back-to-top';
+backToTop.innerHTML = '↑';
+document.body.appendChild(backToTop);
+
+window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+        backToTop.classList.add('visible');
+    } else {
+        backToTop.classList.remove('visible');
+    }
+});
+
+backToTop.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
+// Анимация появления секций
+const sections = document.querySelectorAll('.section');
+const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.1 });
+
+sections.forEach(section => sectionObserver.observe(section));
+
+// Оптимизация производительности
+let lastScrollTop = 0;
+const pageHeader = document.querySelector('.header');
+
+window.addEventListener('scroll', () => {
+    const scrollTop = window.pageYOffset;
+    
+    if (scrollTop > lastScrollTop) {
+        pageHeader.classList.add('header-hidden');
+    } else {
+        pageHeader.classList.remove('header-hidden');
+    }
+    
+    lastScrollTop = scrollTop;
+}, { passive: true }); 

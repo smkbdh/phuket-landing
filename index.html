@@ -19,58 +19,61 @@
     <meta property="og:url" content="https://smkbdh.github.io/phuket-landing/">
     <meta name="twitter:card" content="summary_large_image">
     
-    <!-- Микроразметка для недвижимости -->
+    <!-- Микроразметка для недвижимости и организации -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "RealEstateListing",
-        "name": "Инвестиции в недвижимость Пхукета",
-        "description": "Инвестиции в недвижимость Пхукета с доходностью 8-12% годовых. Готовые квартиры и виллы от 5 млн бат.",
-        "url": "https://smkbdh.github.io/phuket-landing/",
-        "image": "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf",
-        "offers": {
-            "@type": "AggregateOffer",
-            "priceCurrency": "THB",
-            "lowPrice": "5000000",
-            "highPrice": "112000000",
-            "offerCount": "50+"
-        },
-        "areaServed": {
-            "@type": "City",
-            "name": "Пхукет",
-            "address": {
-                "@type": "PostalAddress",
-                "addressCountry": "TH"
+        "@graph": [
+            {
+                "@type": "RealEstateListing",
+                "name": "Инвестиции в недвижимость Пхукета",
+                "description": "Инвестиции в недвижимость Пхукета с доходностью 8-12% годовых. Готовые квартиры и виллы от 5 млн бат.",
+                "url": "https://smkbdh.github.io/phuket-landing/",
+                "image": "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf",
+                "offers": {
+                    "@type": "AggregateOffer",
+                    "priceCurrency": "THB",
+                    "lowPrice": "5000000",
+                    "highPrice": "112000000",
+                    "offerCount": "50+"
+                },
+                "areaServed": {
+                    "@type": "City",
+                    "name": "Пхукет",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "addressCountry": "TH"
+                    }
+                }
+            },
+            {
+                "@type": "RealEstateAgent",
+                "name": "Phuket Stay Pro",
+                "description": "Эксперт по недвижимости Пхукета с 10-летним опытом",
+                "url": "https://smkbdh.github.io/phuket-landing/",
+                "logo": "https://smkbdh.github.io/phuket-landing/logo.png",
+                "telephone": "+66123456789",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Пхукет",
+                    "addressCountry": "TH"
+                },
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "5",
+                    "reviewCount": "50"
+                }
             }
-        }
-    }
-    </script>
-
-    <!-- Микроразметка для организации -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "RealEstateAgent",
-        "name": "Phuket Stay Pro",
-        "description": "Эксперт по недвижимости Пхукета с 10-летним опытом",
-        "url": "https://smkbdh.github.io/phuket-landing/",
-        "logo": "https://smkbdh.github.io/phuket-landing/logo.png",
-        "telephone": "+66123456789",
-        "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Пхукет",
-            "addressCountry": "TH"
-        },
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "5",
-            "reviewCount": "50"
-        }
+        ]
     }
     </script>
     
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js" as="script">
 </head>
 <body>
     <header class="header">
@@ -562,17 +565,15 @@
     </a>
 
     <!-- Скрипты -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="script.js" defer></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
-        // Проверяем загрузку Chart.js
-        window.addEventListener('load', () => {
-            if (typeof Chart === 'undefined') {
-                console.error('Chart.js not loaded');
-            } else {
-                console.log('Chart.js loaded successfully');
-            }
-        });
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
     </script>
-    <script src="script.js"></script>
 </body>
 </html> 
